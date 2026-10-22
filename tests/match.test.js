@@ -63,3 +63,10 @@ test('sortForGrid: ok, poi miss1, nome A–Z', () => {
   ];
   assert.deepEqual(sortForGrid(rs).map((r) => r.drink.name), ['A', 'Z', 'B', 'C']);
 });
+
+test('nessuna combinazione fattibile anche se ogni minimo singolo basta → low', () => {
+  const gt = drink('Gin Tonic', [['Gin', 2], ['Tonic water', 5]]);
+  const r = evaluate(idx, gt, avail({ gin: { oz: 0.9 }, tonica: { oz: 2.6 } }), []);
+  assert.equal(r.status, 'miss1');
+  assert.deepEqual(r.missing, [{ type: 'tonica', reason: 'low' }]);
+});
