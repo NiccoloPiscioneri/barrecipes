@@ -59,3 +59,5 @@ test('attachTypes riempie type', () => {
   const [d] = attachTypes(idx(), [{ ingredients: [{ raw: 'Tequila', type: null }] }]);
   assert.equal(d.ingredients[0].type, 'tequila');
 });
+
+test('typeName di un x: non registrato usa il nome dopo il prefisso', () => assert.equal(typeName(idx(), 'x:frutto del drago'), 'frutto del drago'));

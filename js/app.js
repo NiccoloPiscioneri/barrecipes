@@ -6,6 +6,8 @@ import { evaluate } from './match.js';
 import { esc } from './dom.js';
 import { renderDrinks, renderGrid, drinkActions, drinkChanges, drinkInputs } from './ui/drinks.js';
 import { renderCard, initCard, cardActions } from './ui/card.js';
+import { renderPantry, pantryActions, pantryChanges, pantryInputs } from './ui/pantry.js';
+import { renderSettings, settingsActions, settingsChanges } from './ui/settings.js';
 
 const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings' };
 
@@ -53,12 +55,10 @@ export function toast(msg, ms = 3000) {
 
 const views = {
   drinks: renderDrinks,
-  pantry: () => '<p class="muted">In arrivo.</p>',
+  pantry: renderPantry,
   recipes: () => '<p class="muted">In arrivo.</p>',
-  settings: () => '<p class="muted">In arrivo.</p>',
+  settings: renderSettings,
 };
-
-export function registerView(tab, fn) { views[tab] = fn; }
 
 function renderLoading() {
   if (state.ui.error) {
@@ -126,15 +126,11 @@ const actions = {
   retry: () => loadCatalog(),
   ...drinkActions,
   ...cardActions,
+  ...pantryActions,
+  ...settingsActions,
 };
-const changes = { ...drinkChanges };
-const inputs = { ...drinkInputs };
-
-export function registerHandlers({ actions: a = {}, changes: c = {}, inputs: i = {} }) {
-  Object.assign(actions, a);
-  Object.assign(changes, c);
-  Object.assign(inputs, i);
-}
+const changes = { ...drinkChanges, ...pantryChanges, ...settingsChanges };
+const inputs = { ...drinkInputs, ...pantryInputs };
 
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');

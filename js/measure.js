@@ -35,3 +35,13 @@ export function formatAmount(oz, unit) {
   const frac = FRAC[q - whole];
   return `${[whole || '', frac].filter(Boolean).join(' ')} oz`;
 }
+
+export const PER_OZ = { oz: 1, ml: 30, cl: 3 };
+
+// User-typed quantity → oz. Empty = untracked (null), invalid = undefined.
+export function parseQty(text, unit) {
+  const s = String(text).trim().replace(',', '.');
+  if (!s) return null;
+  const n = Number(s);
+  return Number.isFinite(n) && n >= 0 ? n / PER_OZ[unit] : undefined;
+}

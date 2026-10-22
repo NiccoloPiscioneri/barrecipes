@@ -18,7 +18,7 @@ export function resolveType(idx, raw) {
   return id;
 }
 
-export const typeName = (idx, id) => idx.byId[id]?.name ?? id;
+export const typeName = (idx, id) => idx.byId[id]?.name ?? (id.startsWith('x:') ? id.slice(2) : id);
 
 // A generic type is satisfied by itself or any descendant; a child only by itself.
 export function satisfiers(idx, id) {

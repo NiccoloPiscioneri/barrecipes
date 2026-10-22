@@ -38,3 +38,14 @@ test('format ml e cl arrotondati', () => {
   assert.equal(formatAmount(1.5, 'cl'), '4,5 cl');
   assert.equal(formatAmount(1, 'cl'), '3 cl');
 });
+
+test('parseQty: unità, virgola, vuoto, invalido', async () => {
+  const { parseQty } = await import('../js/measure.js');
+  assert.equal(parseQty('1,5', 'oz'), 1.5);
+  assert.equal(parseQty('750', 'ml'), 25);
+  assert.equal(parseQty('70', 'cl'), 70 / 3);
+  assert.equal(parseQty('  ', 'oz'), null);
+  assert.equal(parseQty('0', 'oz'), 0);
+  assert.equal(parseQty('-1', 'oz'), undefined);
+  assert.equal(parseQty('tanto', 'oz'), undefined);
+});
