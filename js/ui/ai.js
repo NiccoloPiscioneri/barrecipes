@@ -80,7 +80,8 @@ gridExtras.top = () => {
   if (p.status === 'loading') return '<p class="muted">✨ Chiedo a Gemini…</p>';
   if (p.status === 'error') return `${head('Consigli')}<p>${esc(p.error)}</p>`;
   const byId = new Map(evaluated().map((r) => [r.drink.id, r]));
-  const tiles = p.picks.map((x) => drinkTile(byId.get(x.id), x.why));
+  // A picked recipe may have been deleted since.
+  const tiles = p.picks.filter((x) => byId.has(x.id)).map((x) => drinkTile(byId.get(x.id), x.why));
   const ext = p.external.map((e) => `<div class="drink"><div class="ph"></div><div class="body">
     <span class="name">${esc(e.name)}</span><span class="why">${esc(e.why)}</span>
     <div class="badges"><span class="badge try">da provare</span></div></div></div>`);

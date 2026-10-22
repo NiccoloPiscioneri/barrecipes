@@ -1,5 +1,5 @@
 import { state, persist, render, toast } from '../app.js';
-import { esc } from '../dom.js';
+import { esc, safeUrl } from '../dom.js';
 import { typeName, resolveType } from '../types.js';
 import { parseQty, PER_OZ } from '../measure.js';
 import { newRecipe } from '../recipes.js';
@@ -41,7 +41,7 @@ function renderRow(r, n) {
 function renderForm() {
   const f = ui.form;
   return `<div class="box"><h2>${f.id ? 'Modifica ricetta' : 'Nuova ricetta'}</h2>
-    ${f.url ? `<p class="small muted">Da <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.url)}</a></p>` : ''}
+    ${safeUrl(f.url) ? `<p class="small muted">Da <a href="${esc(safeUrl(f.url))}" target="_blank" rel="noopener">${esc(f.url)}</a></p>` : ''}
     <div class="field"><label for="rname">Nome</label>
       <input id="rname" class="input" value="${esc(f.name)}" data-input="formField" data-field="name"></div>
     <label class="toggle" style="max-width:260px"><span>Analcolico</span>

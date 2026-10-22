@@ -19,8 +19,12 @@ export async function callGemini({ key, model, parts, schema, fetchFn = fetch })
     throw new GeminiError('Gemini non raggiungibile: controlla la connessione.');
   }
   if (res.status === 429) throw new GeminiError('Limite gratuito raggiunto, riprova più tardi.');
-  if (res.status === 400 || res.status === 401 || res.status === 403) {
-    throw new GeminiError('Chiave Gemini non valida o non autorizzata (o modello non disponibile): controlla le Impostazioni.');
+  if (res.status === 401 || res.status === 403) {
+    throw new GeminiError('Chiave Gemini non valida o non autorizzata: controlla le Impostazioni.');
+  }
+  if (res.status === 400 || res.status === 404) {
+    const detail = await res.json().then((d) => d?.error?.message).catch(() => '');
+    throw new GeminiError(`Gemini ha rifiutato la richiesta${detail ? `: ${detail}` : ''}. Controlla modello e chiave; per YouTube il video deve essere pubblico.`);
   }
   if (!res.ok) throw new GeminiError(`Gemini ha risposto con un errore (${res.status}), riprova.`);
   try {

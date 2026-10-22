@@ -49,3 +49,12 @@ test('rifiuta ricette malformate', () => {
 });
 
 test('errore leggibile', () => assert.match(bad({}).error, /BarRecipes/));
+
+test('rifiuta url non https, type non stringa e impostazioni non valide', () => {
+  assert.equal(bad({ ...base(), recipes: [{ ...recipe, url: 'javascript:alert(1)' }] }).ok, false);
+  assert.equal(bad({ ...base(), recipes: [{ ...recipe, ingredients: [{ raw: 'Gin', type: 5, oz: 1, text: '' }] }] }).ok, false);
+  assert.equal(bad({ ...base(), settings: { unit: 'gallon' } }).ok, false);
+  assert.equal(bad({ ...base(), settings: { basics: 'no' } }).ok, false);
+  assert.equal(bad({ ...base(), settings: { model: 3 } }).ok, false);
+  assert.equal(bad({ ...base(), recipes: [{ ...recipe, url: 'https://youtu.be/a' }] }).ok, true);
+});

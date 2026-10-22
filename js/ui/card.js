@@ -1,10 +1,10 @@
 import { state, drinks, avail, persist, render, renderOverlay, toast } from '../app.js';
-import { esc } from '../dom.js';
+import { esc, safeUrl } from '../dom.js';
 import { typeName } from '../types.js';
 import { evaluate } from '../match.js';
 import { pickSource, consume } from '../pantry.js';
 import { PORTIONS, STRENGTH, computeDose, feasible, usage } from '../dose.js';
-import { formatAmount } from '../measure.js';
+import { formatAmount, displayAmount } from '../measure.js';
 import { missingLabel } from './drinks.js';
 
 const FULL_BOTTLE_OZ = 25; // ~750 ml
@@ -35,7 +35,7 @@ function ingredientRow(line, a, missing) {
   const name = line.added ? 'Top di soda' : typeName(state.idx, line.type);
   const raw = !line.added && line.raw && line.raw.toLowerCase() !== name.toLowerCase()
     ? ` <span class="muted small">(${esc(line.raw)})</span>` : '';
-  const amount = line.oz != null ? formatAmount(line.oz, state.ui.card.unit) : esc(line.text || '—');
+  const amount = esc(displayAmount(line, state.ui.card.unit));
   const src = pickSource(state.idx, a, line.type);
   const have = src ? a.get(src) : undefined;
   let extra = '';
@@ -88,7 +88,7 @@ export function renderCard() {
       ${c.strength === 'leggero' && d.alcoholic !== 'no' ? '<p class="small muted">Leggero: meno alcol, stesso equilibrio.</p>' : ''}
       <h3 style="margin-top:16px">Procedimento</h3>
       <p class="instructions">${esc(d.instructions || 'Nessun procedimento.')}</p>
-      ${d.url ? `<p class="small"><a href="${esc(d.url)}" target="_blank" rel="noopener">Video originale</a></p>` : ''}
+      ${safeUrl(d.url) ? `<p class="small"><a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">Video originale</a></p>` : ''}
       ${why}
       <button class="btn primary" data-action="done" ${canDo ? '' : 'disabled'}>Fatto! (scala dalle bottiglie)</button>
     </div></div></div></div>`;

@@ -1,4 +1,5 @@
 import { pickSource } from './pantry.js';
+import { scaleText } from './measure.js';
 
 export const PORTIONS = [0.5, 1, 2, 3, 4];
 export const STRENGTH = { leggero: 0.7, normale: 1, forte: 1.25 };
@@ -16,7 +17,7 @@ const cat = (idx, typeId) => idx.byId[typeId]?.cat;
 function applySub(idx, ingredients, sub) {
   if (!sub) return ingredients.map((i) => ({ ...i }));
   return ingredients.map((i) => i.type === sub.from
-    ? { ...i, raw: idx.byId[sub.to]?.name ?? sub.to, type: sub.to, oz: sub.oz ?? i.oz }
+    ? { ...i, raw: idx.byId[sub.to]?.name ?? sub.to, type: sub.to, oz: sub.oz ?? i.oz, text: sub.oz != null ? '' : i.text }
     : { ...i });
 }
 
@@ -24,6 +25,7 @@ function applySub(idx, ingredients, sub) {
 // short drinks scale sweet and sour with the alcohol to keep the ratio, then top with soda.
 export function computeDose(idx, drink, { portion, strength }, sub) {
   const lines = applySub(idx, drink.ingredients, sub);
+  const orig = lines.map((l) => l.oz);
   const a = drink.alcoholic === 'no' ? 1 : STRENGTH[strength];
   const num = (l) => l.oz != null;
   const alcohol = lines.filter((l) => num(l) && isAlcohol(idx, l.type));
@@ -44,6 +46,11 @@ export function computeDose(idx, drink, { portion, strength }, sub) {
     if (a < 1) lines.push({ raw: 'Soda', type: 'soda', oz: before - before * a, text: 'top di soda', added: true });
   }
   for (const l of lines) if (num(l)) l.oz *= portion;
+  lines.forEach((l, n) => {
+    if (l.added || !l.text) return;
+    if (l.oz == null) l.text = scaleText(l.text, portion);
+    else if (orig[n]) l.text = scaleText(l.text, l.oz / orig[n]);
+  });
   return { lines };
 }
 

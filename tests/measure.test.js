@@ -49,3 +49,25 @@ test('parseQty: unità, virgola, vuoto, invalido', async () => {
   assert.equal(parseQty('-1', 'oz'), undefined);
   assert.equal(parseQty('tanto', 'oz'), undefined);
 });
+
+test('scaleText scala il primo numero del testo', async () => {
+  const { scaleText } = await import('../js/measure.js');
+  assert.equal(scaleText('2 dashes', 4), '8 dashes');
+  assert.equal(scaleText('1 cube', 4), '4 cube');
+  assert.equal(scaleText('Juice of 1', 2), 'Juice of 2');
+  assert.equal(scaleText('1 1/2 oz', 0.5), '¾ oz');
+  assert.equal(scaleText('1-2 oz', 2), '2 oz');
+  assert.equal(scaleText('top', 3), 'top');
+  assert.equal(scaleText(' 2 dashes ', 1), '2 dashes');
+  assert.equal(scaleText('2 dashes', 0.1), '¼ dashes');
+});
+
+test('displayAmount: dosi piccole mostrano il testo scalato, zero non diventa ¼', async () => {
+  const { displayAmount } = await import('../js/measure.js');
+  assert.equal(displayAmount({ oz: 1 / 16, text: '2 dashes' }, 'ml'), '2 dashes');
+  assert.equal(displayAmount({ oz: 1.5, text: '1 1/2 oz' }, 'ml'), '45 ml');
+  assert.equal(displayAmount({ oz: null, text: '1 cube' }, 'oz'), '1 cube');
+  assert.equal(displayAmount({ oz: null, text: '' }, 'oz'), '—');
+  assert.equal(displayAmount({ oz: 0, text: '' }, 'oz'), '0 oz');
+  assert.equal(displayAmount({ oz: 0.1, text: '' }, 'oz'), '¼ oz');
+});

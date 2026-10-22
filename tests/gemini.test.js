@@ -73,3 +73,8 @@ test('i prompt contengono i dati', () => {
   assert.match(a[0].text, /Negroni/);
   assert.match(a[0].text, /Bitter arancio/);
 });
+
+test('callGemini: 400 mostra il messaggio di Gemini (es. video privato)', async () => {
+  await assert.rejects(callGemini({ key: 'K', model: 'm', parts: [], fetchFn: reply({ error: { message: 'Video unavailable' } }, 400) }),
+    (e) => e instanceof GeminiError && /Video unavailable/.test(e.message));
+});

@@ -87,3 +87,19 @@ test('usage salta righe null, somma per fonte e sceglie la fonte con pickSource'
   const lines = computeDose(idx, d, { portion: 1, strength: 'normale' }).lines;
   assert.deepEqual(usage(idx, lines, a), [{ typeId: 'rum-bianco', oz: 1.5 }]);
 });
+
+test('computeDose scala il testo: dash con la dose, conteggi con le porzioni', () => {
+  const of = drink('Old Fashioned', [['Bourbon', 2], ['Angostura Bitters', 1 / 16], ['Sugar', null]]);
+  of.ingredients[1].text = '2 dashes';
+  of.ingredients[2].text = '1 cube';
+  const r = computeDose(idx, of, { portion: 4, strength: 'normale' });
+  assert.equal(r.lines[1].text, '8 dashes');
+  assert.equal(r.lines[2].text, '4 cube');
+});
+
+test('sostituzione con dose propria azzera il testo originale', () => {
+  const neg = drink('Negroni', [['Gin', 1], ['Campari', 1]]);
+  neg.ingredients[1].text = '1 oz';
+  const r = computeDose(idx, neg, { portion: 1, strength: 'normale' }, { from: 'bitter-rosso', to: 'bitter-arancio', oz: 1.25 });
+  assert.equal(r.lines[1].text, '');
+});

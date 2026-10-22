@@ -20,11 +20,16 @@ function check(d) {
     if (!isObj(r) || typeof r.id !== 'string' || typeof r.name !== 'string' || !Array.isArray(r.ingredients)) {
       return 'Una ricetta nel file non è valida.';
     }
-    if (r.ingredients.some((i) => !isObj(i) || typeof i.raw !== 'string' || !validOz(i.oz ?? null))) {
+    if (r.url !== undefined && !/^https:\/\//i.test(String(r.url))) return `Link non valido in "${r.name}".`;
+    if (r.ingredients.some((i) => !isObj(i) || typeof i.raw !== 'string' || !validOz(i.oz ?? null)
+      || (i.type != null && typeof i.type !== 'string'))) {
       return `Ingredienti non validi in "${r.name}".`;
     }
   }
-  if (d.settings !== undefined && !isObj(d.settings)) return 'Impostazioni non valide nel file.';
+  const st = d.settings;
+  if (st !== undefined && (!isObj(st) || (st.unit !== undefined && !['oz', 'ml', 'cl'].includes(st.unit))
+    || (st.basics !== undefined && typeof st.basics !== 'boolean')
+    || (st.model !== undefined && typeof st.model !== 'string'))) return 'Impostazioni non valide nel file.';
   return null;
 }
 
