@@ -1,0 +1,70 @@
+{
+ "app": "barrecipes",
+ "version": 1,
+ "exportedAt": "2026-10-22T18:00:00.000Z",
+ "pantry": {
+  "items": {
+   "gin": { "oz": 18 },
+   "vodka": { "oz": 20 },
+   "rum-bianco": { "oz": 12 },
+   "rum-scuro": { "oz": 6 },
+   "tequila": { "oz": 9 },
+   "bourbon": { "oz": 15 },
+   "triple-sec": { "oz": 10 },
+   "vermouth-rosso": { "oz": 14 },
+   "vermouth-dry": { "oz": 8 },
+   "bitter-rosso": { "oz": 1.5 },
+   "bitter-arancio": { "oz": 16 },
+   "amaretto": { "oz": 5 },
+   "liquore-caffe": { "oz": 7 },
+   "spumante": { "oz": 25 },
+   "angostura": { "oz": 3 },
+   "sciroppo-zucchero": { "oz": null },
+   "granatina": { "oz": null },
+   "succo-lime": { "oz": null },
+   "succo-limone": { "oz": null },
+   "succo-arancia": { "oz": null },
+   "succo-ananas": { "oz": null },
+   "soda": { "oz": null },
+   "tonica": { "oz": null },
+   "cola": { "oz": null },
+   "ginger-beer": { "oz": null },
+   "menta": { "oz": null },
+   "lime": { "oz": null },
+   "limone": { "oz": null },
+   "scorza-arancia": { "oz": null }
+  }
+ },
+ "recipes": [
+  {
+   "id": "my:prova-1",
+   "name": "Spritz della casa",
+   "thumb": null,
+   "alcoholic": "yes",
+   "instructions": "Riempi un calice di ghiaccio. Versa lo spumante, poi il bitter, chiudi con uno splash di soda. Guarnisci con mezza fetta d'arancia.",
+   "ingredients": [
+    { "raw": "Spumante / Champagne", "type": "spumante", "oz": 3, "text": "" },
+    { "raw": "Bitter arancio (tipo Aperol)", "type": "bitter-arancio", "oz": 2, "text": "" },
+    { "raw": "Soda", "type": "soda", "oz": null, "text": "splash" },
+    { "raw": "Ghiaccio", "type": "ghiaccio", "oz": null, "text": "" }
+   ],
+   "source": "manual"
+  },
+  {
+   "id": "my:prova-2",
+   "name": "Virgin Mojito della casa",
+   "thumb": null,
+   "alcoholic": "no",
+   "instructions": "Pesta delicatamente la menta con lo sciroppo e il lime. Riempi di ghiaccio tritato e completa con la soda.",
+   "ingredients": [
+    { "raw": "Succo di lime", "type": "succo-lime", "oz": 1, "text": "" },
+    { "raw": "Sciroppo di zucchero", "type": "sciroppo-zucchero", "oz": 0.75, "text": "" },
+    { "raw": "Menta", "type": "menta", "oz": null, "text": "8 foglie" },
+    { "raw": "Soda", "type": "soda", "oz": null, "text": "top" },
+    { "raw": "Ghiaccio", "type": "ghiaccio", "oz": null, "text": "" }
+   ],
+   "source": "manual"
+  }
+ ],
+ "settings": { "unit": "oz", "basics": true, "model": "gemini-2.5-flash" }
+}
