@@ -9,6 +9,7 @@ import { renderCard, initCard, cardActions } from './ui/card.js';
 import { renderPantry, pantryActions, pantryChanges, pantryInputs } from './ui/pantry.js';
 import { renderSettings, settingsActions, settingsChanges } from './ui/settings.js';
 import { aiActions, aiSubmits } from './ui/ai.js';
+import { renderRecipes, recipeActions, recipeInputs, recipeChanges, recipeSubmits } from './ui/recipes.js';
 
 const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings' };
 
@@ -57,7 +58,7 @@ export function toast(msg, ms = 3000) {
 const views = {
   drinks: renderDrinks,
   pantry: renderPantry,
-  recipes: () => '<p class="muted">In arrivo.</p>',
+  recipes: renderRecipes,
   settings: renderSettings,
 };
 
@@ -130,10 +131,11 @@ const actions = {
   ...pantryActions,
   ...settingsActions,
   ...aiActions,
+  ...recipeActions,
 };
-const submits = { ...aiSubmits };
-const changes = { ...drinkChanges, ...pantryChanges, ...settingsChanges };
-const inputs = { ...drinkInputs, ...pantryInputs };
+const submits = { ...aiSubmits, ...recipeSubmits };
+const changes = { ...drinkChanges, ...pantryChanges, ...settingsChanges, ...recipeChanges };
+const inputs = { ...drinkInputs, ...pantryInputs, ...recipeInputs };
 
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');

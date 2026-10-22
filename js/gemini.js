@@ -80,3 +80,44 @@ export function validateRecommend(json, ids) {
     .map((e) => ({ name: str(e.name), why: str(e.why) }));
   return { picks, external };
 }
+
+const YT = /^https:\/\/(?:(?:www\.|m\.)?youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/)|youtu\.be\/)[\w-]+/;
+export const isYoutubeUrl = (s) => YT.test(String(s).trim());
+
+export const EXTRACT_SCHEMA = {
+  type: 'OBJECT',
+  properties: { drinks: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
+    name: { type: 'STRING' }, alcoholic: { type: 'BOOLEAN' }, instructions: { type: 'STRING' },
+    ingredients: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
+      name: { type: 'STRING' }, oz: { type: 'NUMBER' }, text: { type: 'STRING' } }, required: ['name'] } },
+  }, required: ['name', 'ingredients'] } } },
+  required: ['drinks'],
+};
+
+export function youtubeParts(url, typeNames) {
+  return [
+    { fileData: { fileUri: url } },
+    { text: `Guarda il video ed estrai tutti i drink che vengono preparati (anche più di uno).
+Per ogni drink: "name", "alcoholic" (true/false), "instructions" (procedimento in italiano, passo per passo),
+"ingredients" con "name" scelto preferibilmente da questo elenco di ingredienti (scritto esattamente così): ${typeNames.join(', ')};
+"oz" = dose in once per 1 porzione (converti da ml/cl: 30 ml = 1 oz); se la dose non è un volume (es. "top", "1 fetta") ometti "oz" e usa "text".
+Non inventare drink che non sono nel video.` },
+  ];
+}
+
+export function validateExtracted(json, idx, url, now = Date.now()) {
+  return arr(json?.drinks)
+    .filter((d) => str(d?.name) && arr(d.ingredients).some((i) => str(i?.name)))
+    .map((d, n) => ({
+      id: `my:${now}-${n}`,
+      name: str(d.name),
+      thumb: null,
+      alcoholic: d.alcoholic === false ? 'no' : 'yes',
+      instructions: str(d.instructions),
+      ingredients: arr(d.ingredients).filter((i) => str(i?.name)).map((i) => ({
+        raw: str(i.name), type: resolveType(idx, str(i.name)), oz: num(i.oz), text: str(i.text),
+      })),
+      source: 'youtube',
+      url,
+    }));
+}
