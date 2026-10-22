@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1c1b22">
+  <title>BarRecipes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="view" aria-live="polite"></main>
+  <div id="overlay"></div>
+  <div id="toast" role="status"></div>
+  <nav id="nav">
+    <button data-action="nav" data-tab="drinks">🍸 Drink</button>
+    <button data-action="nav" data-tab="pantry">🧴 Dispensa</button>
+    <button data-action="nav" data-tab="recipes">📒 Le mie ricette</button>
+    <button data-action="nav" data-tab="settings">⚙️ Impostazioni</button>
+  </nav>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
