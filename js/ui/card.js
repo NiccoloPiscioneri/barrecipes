@@ -71,7 +71,7 @@ export function renderCard() {
     data-v="${s}" aria-pressed="${c.strength === s}" ${has(c.portion, s) ? '' : 'disabled'}>${STRENGTH_LABEL[s]}</button>`));
   const units = seg('Unità', ['oz', 'ml', 'cl'].map((u) => `<button data-action="unit" data-v="${u}"
     aria-pressed="${c.unit === u}">${u}</button>`));
-  const img = d.thumb ? `<img src="${esc(d.thumb)}" alt="${esc(d.name)}">` : '<div class="ph"></div>';
+  const img = d.thumb ? `<img src="${esc(d.thumb)}" alt="${esc(d.name)}" onerror="this.removeAttribute('src')">` : '<div class="ph"></div>';
   const why = canDo ? '' : `<p class="small muted">${combos.length
     ? 'Questa combinazione supera quello che resta nelle bottiglie.'
     : 'Ti manca qualcosa (o non basta): usa un\'alternativa o aggiorna la dispensa.'}</p>`;

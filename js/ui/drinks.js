@@ -38,7 +38,7 @@ const thumb = (d) => (d.thumb ? `${d.thumb}${d.source === 'cocktaildb' ? '/small
 export function drinkTile(r, why = '') {
   const src = thumb(r.drink);
   return `<button class="drink" data-action="open" data-id="${esc(r.drink.id)}">
-    ${src ? `<img src="${esc(src)}" alt="" loading="lazy">` : '<div class="ph"></div>'}
+    ${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.removeAttribute('src')">` : '<div class="ph"></div>'}
     <div class="body"><span class="name">${esc(r.drink.name)}</span>
     ${why ? `<span class="why">${esc(why)}</span>` : ''}${badges(r)}</div></button>`;
 }
