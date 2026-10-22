@@ -57,3 +57,8 @@ test('newRecipe in modifica mantiene id, source e url', () => {
   assert.equal(d.source, 'youtube');
   assert.equal(d.url, 'https://youtu.be/a');
 });
+
+test('validateExtracted: oz testuale convertito', () => {
+  const out = validateExtracted({ drinks: [{ name: 'X', ingredients: [{ name: 'Gin', oz: '1 1/2' }, { name: 'Soda', oz: '60 ml' }] }] }, types(), 'u', 1);
+  assert.deepEqual(out[0].ingredients.map((i) => i.oz), [1.5, 2]);
+});

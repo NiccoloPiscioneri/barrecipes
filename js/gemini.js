@@ -1,24 +1,41 @@
 import { resolveType } from './types.js';
+import { parseMeasure } from './measure.js';
 
 export class GeminiError extends Error {}
 
 const API = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
-export async function callGemini({ key, model, parts, schema, fetchFn = fetch }) {
-  let res;
+// Alias that Google keeps pointed at the current free Flash-Lite model.
+export const DEFAULT_MODEL = 'gemini-flash-lite-latest';
+const RETIRED = ['gemini-2.5-flash'];
+export const modelOrDefault = (m) => (!m || RETIRED.includes(m) ? DEFAULT_MODEL : m);
+
+async function post({ key, model, parts, schema, fetchFn, timeoutMs }) {
   try {
-    res = await fetchFn(`${API}${encodeURIComponent(model)}:generateContent`, {
+    return await fetchFn(`${API}${encodeURIComponent(model)}:generateContent`, {
       method: 'POST',
+      signal: AbortSignal.timeout(timeoutMs),
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({
         contents: [{ role: 'user', parts }],
-        generationConfig: { responseMimeType: 'application/json', ...(schema && { responseSchema: schema }) },
+        // Token cap: lite models can loop on long outputs instead of stopping.
+        generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 4096, ...(schema && { responseSchema: schema }) },
       }),
     });
-  } catch {
+  } catch (e) {
+    if (e?.name === 'TimeoutError') throw new GeminiError('Gemini non risponde, riprova tra poco.');
     throw new GeminiError('Gemini non raggiungibile: controlla la connessione.');
   }
+}
+
+export async function callGemini({ key, model, parts, schema, fetchFn = fetch, timeoutMs = 60000 }) {
+  let res = await post({ key, model, parts, schema, fetchFn, timeoutMs });
+  // Retired or overloaded model: fall back to the default one before giving up.
+  if ((res.status === 503 || res.status === 404) && model !== DEFAULT_MODEL) {
+    res = await post({ key, model: DEFAULT_MODEL, parts, schema, fetchFn, timeoutMs });
+  }
   if (res.status === 429) throw new GeminiError('Limite gratuito raggiunto, riprova più tardi.');
+  if (res.status === 503) throw new GeminiError('Gemini è sovraccarico in questo momento, riprova tra poco.');
   if (res.status === 401 || res.status === 403) {
     throw new GeminiError('Chiave Gemini non valida o non autorizzata: controlla le Impostazioni.');
   }
@@ -38,25 +55,32 @@ export async function callGemini({ key, model, parts, schema, fetchFn = fetch })
 const arr = (v) => (Array.isArray(v) ? v : []);
 const str = (v) => (typeof v === 'string' ? v.trim() : '');
 const num = (v) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null);
+// Schemas ask for oz as text: NUMBER fields make lite models loop on "1.0000…".
+const ozOf = (v) => {
+  if (typeof v === 'number') return num(v);
+  const t = str(v);
+  if (!t) return null;
+  return parseMeasure(/[a-z]/i.test(t) ? t : `${t} oz`).oz;
+};
 
 export const ALT_SCHEMA = {
   type: 'OBJECT',
   properties: { alternatives: { type: 'ARRAY', items: { type: 'OBJECT',
-    properties: { name: { type: 'STRING' }, oz: { type: 'NUMBER' }, note: { type: 'STRING' } }, required: ['name'] } } },
+    properties: { name: { type: 'STRING' }, oz: { type: 'STRING' }, note: { type: 'STRING' } }, required: ['name', 'oz', 'note'] } } },
   required: ['alternatives'],
 };
 
 export function alternativePrompt(drinkName, missingName, pantryNames, recipe = '') {
   return [{ text: `Sei un bartender esperto. Per il drink "${drinkName}" (ricetta per 1 porzione: ${recipe}) manca "${missingName}".
 Proponi da 1 a 3 sostituti, preferendo ingredienti presenti in questa dispensa: ${pantryNames.join(', ') || '(vuota)'}.
-Per ogni sostituto dai: "name" (scritto esattamente come nella dispensa se viene da lì), "oz" (dose in once per 1 porzione, aggiustata per mantenere l'equilibrio) e "note" (una frase in italiano su come cambia il drink).` }];
+Per ogni sostituto dai: "name" (scritto esattamente come nella dispensa se viene da lì), "oz" (dose in once per 1 porzione come testo breve, es. "1" o "3/4", aggiustata per mantenere l'equilibrio) e "note" (una frase in italiano su come cambia il drink).` }];
 }
 
 export function validateAlternatives(json, idx) {
   return arr(json?.alternatives)
     .filter((a) => str(a?.name))
     .slice(0, 3)
-    .map((a) => ({ type: resolveType(idx, str(a.name)), name: str(a.name), oz: num(a.oz), note: str(a.note) }));
+    .map((a) => ({ type: resolveType(idx, str(a.name)), name: str(a.name), oz: ozOf(a.oz), note: str(a.note) }));
 }
 
 export const REC_SCHEMA = {
@@ -93,7 +117,7 @@ export const EXTRACT_SCHEMA = {
   properties: { drinks: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
     name: { type: 'STRING' }, alcoholic: { type: 'BOOLEAN' }, instructions: { type: 'STRING' },
     ingredients: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
-      name: { type: 'STRING' }, oz: { type: 'NUMBER' }, text: { type: 'STRING' } }, required: ['name'] } },
+      name: { type: 'STRING' }, oz: { type: 'STRING' }, text: { type: 'STRING' } }, required: ['name'] } },
   }, required: ['name', 'ingredients'] } } },
   required: ['drinks'],
 };
@@ -104,7 +128,7 @@ export function youtubeParts(url, typeNames) {
     { text: `Guarda il video ed estrai tutti i drink che vengono preparati (anche più di uno).
 Per ogni drink: "name", "alcoholic" (true/false), "instructions" (procedimento in italiano, passo per passo),
 "ingredients" con "name" scelto preferibilmente da questo elenco di ingredienti (scritto esattamente così): ${typeNames.join(', ')};
-"oz" = dose in once per 1 porzione (converti da ml/cl: 30 ml = 1 oz); se la dose non è un volume (es. "top", "1 fetta") ometti "oz" e usa "text".
+"oz" = dose in once per 1 porzione come testo breve, es. "1 1/2" (converti da ml/cl: 30 ml = 1 oz); se la dose non è un volume (es. "top", "1 fetta") ometti "oz" e usa "text".
 Non inventare drink che non sono nel video.` },
   ];
 }
@@ -119,7 +143,7 @@ export function validateExtracted(json, idx, url, now = Date.now()) {
       alcoholic: d.alcoholic === false ? 'no' : 'yes',
       instructions: str(d.instructions),
       ingredients: arr(d.ingredients).filter((i) => str(i?.name)).map((i) => ({
-        raw: str(i.name), type: resolveType(idx, str(i.name)), oz: num(i.oz), text: str(i.text),
+        raw: str(i.name), type: resolveType(idx, str(i.name)), oz: ozOf(i.oz), text: str(i.text),
       })),
       source: 'youtube',
       url,

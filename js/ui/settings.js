@@ -2,6 +2,7 @@ import { state, persist, render, toast, loadCatalog } from '../app.js';
 import { store } from '../store.js';
 import { esc } from '../dom.js';
 import { exportData, parseImport } from '../backup.js';
+import { modelOrDefault, DEFAULT_MODEL } from '../gemini.js';
 
 export const geminiKey = () => store.get('br.geminiKey', '');
 
@@ -27,7 +28,8 @@ export function renderSettings() {
       <div class="field"><label for="gkey">Chiave API</label>
         <input id="gkey" class="input" type="password" autocomplete="off" value="${esc(geminiKey())}" data-change="geminiKey"></div>
       <div class="field"><label for="gmodel">Modello</label>
-        <input id="gmodel" class="input" value="${esc(s.model)}" data-change="model"></div>
+        <input id="gmodel" class="input" value="${esc(s.model)}" data-change="model">
+        <span class="small muted">Lascia vuoto per usare ${DEFAULT_MODEL}, che Google aggiorna da solo. Se il modello scelto è sovraccarico o ritirato, l'app ripiega su questo.</span></div>
     </div>
     <div class="box">
       <h2>Catalogo</h2>
@@ -61,7 +63,7 @@ export const settingsActions = {
 
 export const settingsChanges = {
   basics: (el) => saveSettings({ basics: el.checked }),
-  model: (el) => saveSettings({ model: el.value.trim() || 'gemini-2.5-flash' }),
+  model: (el) => { saveSettings({ model: modelOrDefault(el.value.trim()) }); el.value = state.settings.model; },
   geminiKey: (el) => {
     store.set('br.geminiKey', el.value.trim());
     toast(el.value.trim() ? 'Chiave salvata su questo dispositivo.' : 'Chiave rimossa.');
@@ -77,6 +79,7 @@ export const settingsChanges = {
     state.pantry = pantry;
     state.recipes = recipes;
     state.settings = { ...state.settings, ...r.data.settings };
+    state.settings.model = modelOrDefault(state.settings.model);
     state.off = [];
     ['pantry', 'recipes', 'settings', 'off'].forEach(persist);
     toast('Backup importato.');

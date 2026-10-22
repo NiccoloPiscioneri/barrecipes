@@ -78,3 +78,45 @@ test('callGemini: 400 mostra il messaggio di Gemini (es. video privato)', async 
   await assert.rejects(callGemini({ key: 'K', model: 'm', parts: [], fetchFn: reply({ error: { message: 'Video unavailable' } }, 400) }),
     (e) => e instanceof GeminiError && /Video unavailable/.test(e.message));
 });
+
+test('modello predefinito e migrazione dei modelli ritirati', async () => {
+  const { DEFAULT_MODEL, modelOrDefault } = await import('../js/gemini.js');
+  assert.equal(DEFAULT_MODEL, 'gemini-flash-lite-latest');
+  assert.equal(modelOrDefault('gemini-2.5-flash'), DEFAULT_MODEL);
+  assert.equal(modelOrDefault(''), DEFAULT_MODEL);
+  assert.equal(modelOrDefault(undefined), DEFAULT_MODEL);
+  assert.equal(modelOrDefault('gemini-3.8-flash'), 'gemini-3.8-flash');
+});
+
+test('callGemini: 503 o 404 sul modello scelto → riprova col predefinito', async () => {
+  for (const status of [503, 404]) {
+    const urls = [];
+    const out = await callGemini({ key: 'K', model: 'gemini-3.8-flash', parts: [],
+      fetchFn: async (url) => { urls.push(url); return urls.length === 1 ? reply({}, status)() : reply('{"ok":true}')(); } });
+    assert.deepEqual(out, { ok: true });
+    assert.match(urls[1], /gemini-flash-lite-latest:generateContent$/);
+  }
+});
+
+test('callGemini: 503 anche sul predefinito → messaggio sovraccarico', async () => {
+  await assert.rejects(callGemini({ key: 'K', model: 'gemini-flash-lite-latest', parts: [], fetchFn: reply({}, 503) }),
+    (e) => e instanceof GeminiError && /sovraccarico/.test(e.message));
+});
+
+test('oz come testo: niente NUMBER nello schema, conversione lato app', async () => {
+  const { ALT_SCHEMA, EXTRACT_SCHEMA } = await import('../js/gemini.js');
+  assert.ok(!JSON.stringify([ALT_SCHEMA, EXTRACT_SCHEMA]).includes('NUMBER'));
+  const idx = types();
+  const r = validateAlternatives({ alternatives: [{ name: 'Gin', oz: '1.25' }, { name: 'Gin', oz: '3/4' }, { name: 'Gin', oz: '30 ml' }] }, idx);
+  assert.deepEqual(r.map((a) => a.oz), [1.25, 0.75, 1]);
+});
+
+test('callGemini: limita i token e va in timeout invece di restare appeso', async () => {
+  let body;
+  await callGemini({ key: 'K', model: 'm', parts: [], fetchFn: async (u, o) => { body = JSON.parse(o.body); return reply('{}')(); } });
+  assert.ok(body.generationConfig.maxOutputTokens > 0);
+  await assert.rejects(
+    callGemini({ key: 'K', model: 'gemini-flash-lite-latest', parts: [], timeoutMs: 20,
+      fetchFn: (u, o) => new Promise((_, rej) => o.signal.addEventListener('abort', () => rej(new DOMException('t', 'TimeoutError')))) }),
+    (e) => e instanceof GeminiError && /non risponde/.test(e.message));
+});

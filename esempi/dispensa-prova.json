@@ -66,5 +66,5 @@
    "source": "manual"
   }
  ],
- "settings": { "unit": "oz", "basics": true, "model": "gemini-2.5-flash" }
+ "settings": { "unit": "oz", "basics": true, "model": "gemini-flash-lite-latest" }
 }

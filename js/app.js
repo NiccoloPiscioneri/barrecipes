@@ -4,6 +4,7 @@ import { fetchCatalog } from './catalog.js';
 import { availableSet } from './pantry.js';
 import { evaluate } from './match.js';
 import { esc } from './dom.js';
+import { modelOrDefault } from './gemini.js';
 import { renderDrinks, renderGrid, drinkActions, drinkChanges, drinkInputs } from './ui/drinks.js';
 import { renderCard, initCard, cardActions } from './ui/card.js';
 import { renderPantry, pantryActions, pantryChanges, pantryInputs } from './ui/pantry.js';
@@ -19,9 +20,11 @@ export const state = {
   recipes: store.get(KEYS.recipes, []),
   pantry: store.get(KEYS.pantry, { items: {} }),
   off: store.get(KEYS.off, []),
-  settings: { unit: 'oz', basics: true, model: 'gemini-2.5-flash', ...store.get(KEYS.settings, {}) },
+  settings: { unit: 'oz', basics: true, ...store.get(KEYS.settings, {}) },
   ui: { tab: 'drinks', filter: 'all', search: '', card: null, picks: null, loading: null, error: null },
 };
+
+state.settings.model = modelOrDefault(state.settings.model);
 
 let warned = false;
 export function persist(name) {

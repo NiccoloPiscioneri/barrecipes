@@ -39,7 +39,7 @@ Apri l'indirizzo pubblicato e scegli **Aggiungi a schermata Home** (Safari) oppu
 2. Crea la chiave in un progetto Google Cloud **senza fatturazione attiva**. In questo modo non paghi mai nulla: superato il limite gratuito, Gemini risponde "limite raggiunto" invece di addebitare.
 3. Incollala in **Impostazioni → Gemini** nell'app. Resta solo su quel dispositivo e non finisce nei backup.
 
-Se il modello predefinito (`gemini-2.5-flash`) non è più disponibile, cambialo nelle Impostazioni con un modello Flash gratuito attuale.
+Il modello predefinito è `gemini-flash-lite-latest`, un alias che Google tiene aggiornato sull'ultimo Flash-Lite gratuito. Puoi sceglierne un altro nelle Impostazioni (es. `gemini-3.8-flash`): se è ritirato o sovraccarico, l'app ripiega da sola sul predefinito.
 
 ## Backup
 
