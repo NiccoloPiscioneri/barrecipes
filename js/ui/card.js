@@ -3,7 +3,7 @@ import { esc, safeUrl } from '../dom.js';
 import { typeName } from '../types.js';
 import { evaluate } from '../match.js';
 import { pickSource, consume } from '../pantry.js';
-import { PORTIONS, STRENGTH, computeDose, feasible, usage } from '../dose.js';
+import { PORTIONS, STRENGTH, computeDose, feasible, usage, pruneDrops } from '../dose.js';
 import { formatAmount, displayAmount } from '../measure.js';
 import { missingLabel } from './drinks.js';
 
@@ -115,7 +115,8 @@ export const cardActions = {
     const a = avail();
     const { lines } = computeDose(state.idx, findDrink(c.id), c, c.sub);
     const before = Object.keys(state.pantry.items);
-    state.pantry = consume(state.pantry, usage(state.idx, lines, a));
+    const used = usage(state.idx, lines, a);
+    state.pantry = pruneDrops(state.idx, consume(state.pantry, used), drinks(), used.map((u) => u.typeId));
     persist('pantry');
     const gone = before.filter((id) => !state.pantry.items[id]).map((id) => typeName(state.idx, id));
     toast(gone.length ? `Salute! 🍹 Finita: ${gone.join(', ')}` : 'Salute! 🍹 Bottiglie aggiornate.');

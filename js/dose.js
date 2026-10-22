@@ -1,5 +1,6 @@
 import { pickSource } from './pantry.js';
 import { scaleText } from './measure.js';
+import { satisfiers } from './types.js';
 
 export const PORTIONS = [0.5, 1, 2, 3, 4];
 export const STRENGTH = { leggero: 0.7, normale: 1, forte: 1.25 };
@@ -79,4 +80,29 @@ export function feasible(idx, drink, avail, sub) {
     }
   }
   return out;
+}
+
+// Smallest dose any drink can ask of this bottle; null when no drink uses it.
+function minUseful(idx, drinks, typeId) {
+  let min = null;
+  for (const d of drinks) {
+    for (const ing of d.ingredients) {
+      if (!satisfiers(idx, ing.type).includes(typeId)) continue;
+      const m = minDose(idx, ing);
+      if (m != null && (min === null || m < min)) min = m;
+    }
+  }
+  return min;
+}
+
+// Leftover drops that no drink can use anymore count as an empty bottle.
+export function pruneDrops(idx, pantry, drinks, ids) {
+  const items = { ...pantry.items };
+  for (const id of ids) {
+    const oz = items[id]?.oz;
+    if (oz == null) continue;
+    const min = minUseful(idx, drinks, id);
+    if (min !== null && oz < min - 1e-9) delete items[id];
+  }
+  return { ...pantry, items };
 }

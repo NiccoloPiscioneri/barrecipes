@@ -54,7 +54,7 @@ Ricettario di drink personale, usato dal proprietario sul proprio tablet, sia pe
 - Intensità Leggero/Forte senza sbilanciare.
 - Once come unità di default.
 - **Blocco per quantità insufficiente:** se una bottiglia non basta, le combinazioni porzione/intensità che la superano sono disabilitate. Viene proposta la combinazione massima fattibile. Esempio: resta ½ oz, quindi solo "½ porzione" o "½ porzione + Leggero".
-- **Bottiglia a 0:** viene eliminata dalla dispensa.
+- **Bottiglia a 0:** viene eliminata dalla dispensa. Lo stesso vale se restano poche gocce che non bastano più per nessun drink, cioè meno della dose minima (½ porzione, Leggero) richiesta da qualsiasi ricetta che usa quel tipo (decisione del proprietario, 2026-10-22).
 
 ## Scelte del designer (Claude), correggibili
 

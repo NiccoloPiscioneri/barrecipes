@@ -103,3 +103,20 @@ test('sostituzione con dose propria azzera il testo originale', () => {
   const r = computeDose(idx, neg, { portion: 1, strength: 'normale' }, { from: 'bitter-rosso', to: 'bitter-arancio', oz: 1.25 });
   assert.equal(r.lines[1].text, '');
 });
+
+test('pruneDrops rimuove le bottiglie che non bastano più per nessun drink', async () => {
+  const { pruneDrops } = await import('../js/dose.js');
+  const all = [margarita, drink('Old Fashioned', [['Bourbon', 2], ['Angostura Bitters', 1 / 16]])];
+  // tequila min = 1.5 × ½ × 0.7 = 0.525; triple sec min = 0.5 × ½ × 0.7 = 0.175; angostura min = 1/16 × ½ = 1/32
+  const p = pruneDrops(idx, { items: {
+    tequila: { oz: 0.075 }, 'triple-sec': { oz: 0.2 }, angostura: { oz: 0.04 }, 'succo-lime': { oz: null }, vodka: { oz: 0.01 },
+  } }, all, ['tequila', 'triple-sec', 'angostura', 'succo-lime', 'vodka']);
+  assert.deepEqual(Object.keys(p.items).sort(), ['angostura', 'succo-lime', 'triple-sec', 'vodka']);
+});
+
+test('pruneDrops: tipo generico nella ricetta conta per i figli', async () => {
+  const { pruneDrops } = await import('../js/dose.js');
+  const all = [drink('Rum shot', [['Rum', 2]])]; // min 0.7
+  const p = pruneDrops(idx, { items: { 'rum-scuro': { oz: 0.5 } } }, all, ['rum-scuro']);
+  assert.equal(p.items['rum-scuro'], undefined);
+});
