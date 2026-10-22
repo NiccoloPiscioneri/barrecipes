@@ -6,6 +6,7 @@ export function loadTypes(json) {
     if (t.parent) (children[t.parent] ??= []).push(t.id);
   }
   for (const [raw, id] of Object.entries(json.map)) map[raw.toLowerCase().trim()] = id;
+  for (const t of json.types) map[t.name.toLowerCase()] ??= t.id; // Italian names typed by users or Gemini
   return { byId, map, children };
 }
 

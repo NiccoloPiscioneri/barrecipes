@@ -83,6 +83,8 @@ export function renderCard() {
       ${d.alcoholic === 'no' ? '<span class="badge na">analcolico</span>' : ''}
       <div class="controls">${portions}${strengths}${units}</div>
       <table class="ings"><tbody>${lines.map((l) => ingredientRow(l, a, missing)).join('')}</tbody></table>
+      ${c.sub ? `<p class="small">Sostituzione: ${esc(typeName(state.idx, c.sub.from))} → ${esc(typeName(state.idx, c.sub.to))}
+        <button class="btn" data-action="clearSub">Annulla</button></p>` : ''}
       ${c.strength === 'leggero' && d.alcoholic !== 'no' ? '<p class="small muted">Leggero: meno alcol, stesso equilibrio.</p>' : ''}
       <h3 style="margin-top:16px">Procedimento</h3>
       <p class="instructions">${esc(d.instructions || 'Nessun procedimento.')}</p>

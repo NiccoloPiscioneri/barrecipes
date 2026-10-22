@@ -61,3 +61,8 @@ test('attachTypes riempie type', () => {
 });
 
 test('typeName di un x: non registrato usa il nome dopo il prefisso', () => assert.equal(typeName(idx(), 'x:frutto del drago'), 'frutto del drago'));
+
+test('risolve anche i nomi italiani dei tipi', () => {
+  assert.equal(resolveType(idx(), 'Rum bianco'), 'rum-bianco');
+  assert.equal(resolveType(idx(), 'bitter arancio (tipo aperol)'), 'bitter-arancio');
+});

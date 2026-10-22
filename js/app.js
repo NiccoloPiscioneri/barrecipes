@@ -8,6 +8,7 @@ import { renderDrinks, renderGrid, drinkActions, drinkChanges, drinkInputs } fro
 import { renderCard, initCard, cardActions } from './ui/card.js';
 import { renderPantry, pantryActions, pantryChanges, pantryInputs } from './ui/pantry.js';
 import { renderSettings, settingsActions, settingsChanges } from './ui/settings.js';
+import { aiActions, aiSubmits } from './ui/ai.js';
 
 const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings' };
 
@@ -128,7 +129,9 @@ const actions = {
   ...cardActions,
   ...pantryActions,
   ...settingsActions,
+  ...aiActions,
 };
+const submits = { ...aiSubmits };
 const changes = { ...drinkChanges, ...pantryChanges, ...settingsChanges };
 const inputs = { ...drinkInputs, ...pantryInputs };
 
@@ -143,6 +146,12 @@ document.addEventListener('change', (e) => {
 document.addEventListener('input', (e) => {
   const el = e.target.closest('[data-input]');
   if (el) inputs[el.dataset.input]?.(el, e);
+});
+document.addEventListener('submit', (e) => {
+  const form = e.target.closest('[data-submit]');
+  if (!form) return;
+  e.preventDefault();
+  submits[form.dataset.submit]?.(form, e);
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && state.ui.card) { state.ui.card = null; renderOverlay(); }

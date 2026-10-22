@@ -43,7 +43,7 @@ export function drinkTile(r, why = '') {
     ${why ? `<span class="why">${esc(why)}</span>` : ''}${badges(r)}</div></button>`;
 }
 
-const passesFilter = (d) => state.ui.filter === 'all'
+export const passesFilter = (d) => state.ui.filter === 'all'
   || (state.ui.filter === 'cocktail' ? d.alcoholic !== 'no' : d.alcoholic !== 'yes');
 
 const section = (title, rs) => (rs.length
