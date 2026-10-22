@@ -1,0 +1,784 @@
+{
+ "types": [
+  {
+   "id": "ghiaccio",
+   "name": "Ghiaccio",
+   "cat": "base"
+  },
+  {
+   "id": "acqua",
+   "name": "Acqua",
+   "cat": "base"
+  },
+  {
+   "id": "zucchero",
+   "name": "Zucchero",
+   "cat": "base"
+  },
+  {
+   "id": "sale",
+   "name": "Sale",
+   "cat": "base"
+  },
+  {
+   "id": "gin",
+   "name": "Gin",
+   "cat": "spirit"
+  },
+  {
+   "id": "vodka",
+   "name": "Vodka",
+   "cat": "spirit"
+  },
+  {
+   "id": "rum",
+   "name": "Rum",
+   "cat": "spirit"
+  },
+  {
+   "id": "rum-bianco",
+   "name": "Rum bianco",
+   "cat": "spirit",
+   "parent": "rum"
+  },
+  {
+   "id": "rum-scuro",
+   "name": "Rum scuro",
+   "cat": "spirit",
+   "parent": "rum"
+  },
+  {
+   "id": "rum-speziato",
+   "name": "Rum speziato",
+   "cat": "spirit",
+   "parent": "rum"
+  },
+  {
+   "id": "rum-overproof",
+   "name": "Rum overproof",
+   "cat": "spirit",
+   "parent": "rum"
+  },
+  {
+   "id": "cachaca",
+   "name": "Cachaça",
+   "cat": "spirit"
+  },
+  {
+   "id": "tequila",
+   "name": "Tequila",
+   "cat": "spirit"
+  },
+  {
+   "id": "whisky",
+   "name": "Whisky",
+   "cat": "spirit"
+  },
+  {
+   "id": "scotch",
+   "name": "Scotch whisky",
+   "cat": "spirit",
+   "parent": "whisky"
+  },
+  {
+   "id": "bourbon",
+   "name": "Bourbon",
+   "cat": "spirit",
+   "parent": "whisky"
+  },
+  {
+   "id": "whiskey-irlandese",
+   "name": "Whiskey irlandese",
+   "cat": "spirit",
+   "parent": "whisky"
+  },
+  {
+   "id": "brandy",
+   "name": "Brandy",
+   "cat": "spirit"
+  },
+  {
+   "id": "cognac",
+   "name": "Cognac",
+   "cat": "spirit",
+   "parent": "brandy"
+  },
+  {
+   "id": "brandy-mela",
+   "name": "Brandy di mele",
+   "cat": "spirit",
+   "parent": "brandy"
+  },
+  {
+   "id": "assenzio",
+   "name": "Assenzio",
+   "cat": "spirit"
+  },
+  {
+   "id": "alcol-puro",
+   "name": "Alcol puro",
+   "cat": "spirit"
+  },
+  {
+   "id": "triple-sec",
+   "name": "Triple sec",
+   "cat": "liqueur"
+  },
+  {
+   "id": "blue-curacao",
+   "name": "Blue Curaçao",
+   "cat": "liqueur"
+  },
+  {
+   "id": "vermouth",
+   "name": "Vermouth",
+   "cat": "liqueur"
+  },
+  {
+   "id": "vermouth-dry",
+   "name": "Vermouth dry",
+   "cat": "liqueur",
+   "parent": "vermouth"
+  },
+  {
+   "id": "vermouth-rosso",
+   "name": "Vermouth rosso",
+   "cat": "liqueur",
+   "parent": "vermouth"
+  },
+  {
+   "id": "bitter-aperitivo",
+   "name": "Bitter da aperitivo",
+   "cat": "liqueur"
+  },
+  {
+   "id": "bitter-rosso",
+   "name": "Bitter rosso (tipo Campari)",
+   "cat": "liqueur",
+   "parent": "bitter-aperitivo"
+  },
+  {
+   "id": "bitter-arancio",
+   "name": "Bitter arancio (tipo Aperol)",
+   "cat": "liqueur",
+   "parent": "bitter-aperitivo"
+  },
+  {
+   "id": "amaretto",
+   "name": "Amaretto",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-caffe",
+   "name": "Liquore al caffè",
+   "cat": "liqueur"
+  },
+  {
+   "id": "crema-irlandese",
+   "name": "Crema di whiskey",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-pesca",
+   "name": "Liquore alla pesca",
+   "cat": "liqueur"
+  },
+  {
+   "id": "maraschino",
+   "name": "Maraschino",
+   "cat": "liqueur"
+  },
+  {
+   "id": "galliano",
+   "name": "Galliano",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-lampone",
+   "name": "Liquore al lampone",
+   "cat": "liqueur"
+  },
+  {
+   "id": "chartreuse",
+   "name": "Chartreuse verde",
+   "cat": "liqueur"
+  },
+  {
+   "id": "creme-de-cacao",
+   "name": "Crème de cacao",
+   "cat": "liqueur"
+  },
+  {
+   "id": "creme-de-cassis",
+   "name": "Crème de cassis",
+   "cat": "liqueur"
+  },
+  {
+   "id": "creme-de-menthe",
+   "name": "Crème de menthe",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-melone",
+   "name": "Liquore al melone",
+   "cat": "liqueur"
+  },
+  {
+   "id": "amaro-erbe",
+   "name": "Amaro alle erbe",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-cannella",
+   "name": "Liquore alla cannella",
+   "cat": "liqueur"
+  },
+  {
+   "id": "southern-comfort",
+   "name": "Southern Comfort",
+   "cat": "liqueur"
+  },
+  {
+   "id": "benedictine",
+   "name": "Bénédictine",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-nocciola",
+   "name": "Liquore alla nocciola",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-cocco",
+   "name": "Liquore al cocco",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-albicocca",
+   "name": "Liquore all'albicocca",
+   "cat": "liqueur"
+  },
+  {
+   "id": "cherry-brandy",
+   "name": "Cherry brandy",
+   "cat": "liqueur"
+  },
+  {
+   "id": "liquore-mora",
+   "name": "Liquore alla mora",
+   "cat": "liqueur"
+  },
+  {
+   "id": "gin-prugnolo",
+   "name": "Sloe gin",
+   "cat": "liqueur"
+  },
+  {
+   "id": "anice",
+   "name": "Liquore all'anice",
+   "cat": "liqueur"
+  },
+  {
+   "id": "sambuca",
+   "name": "Sambuca",
+   "cat": "liqueur",
+   "parent": "anice"
+  },
+  {
+   "id": "vino",
+   "name": "Vino",
+   "cat": "liqueur"
+  },
+  {
+   "id": "vino-rosso",
+   "name": "Vino rosso",
+   "cat": "liqueur",
+   "parent": "vino"
+  },
+  {
+   "id": "vino-bianco",
+   "name": "Vino bianco",
+   "cat": "liqueur",
+   "parent": "vino"
+  },
+  {
+   "id": "porto",
+   "name": "Porto",
+   "cat": "liqueur"
+  },
+  {
+   "id": "sherry",
+   "name": "Sherry",
+   "cat": "liqueur"
+  },
+  {
+   "id": "angostura",
+   "name": "Angostura",
+   "cat": "other"
+  },
+  {
+   "id": "bitter-arancia-gocce",
+   "name": "Orange bitters",
+   "cat": "other"
+  },
+  {
+   "id": "sciroppo-zucchero",
+   "name": "Sciroppo di zucchero",
+   "cat": "sweet"
+  },
+  {
+   "id": "granatina",
+   "name": "Granatina",
+   "cat": "sweet"
+  },
+  {
+   "id": "miele",
+   "name": "Miele",
+   "cat": "sweet"
+  },
+  {
+   "id": "sciroppo-cioccolato",
+   "name": "Sciroppo al cioccolato",
+   "cat": "sweet"
+  },
+  {
+   "id": "sciroppo-sambuco",
+   "name": "Sciroppo di sambuco",
+   "cat": "sweet"
+  },
+  {
+   "id": "orzata",
+   "name": "Orzata",
+   "cat": "sweet"
+  },
+  {
+   "id": "succo-limone",
+   "name": "Succo di limone",
+   "cat": "sour"
+  },
+  {
+   "id": "succo-lime",
+   "name": "Succo di lime",
+   "cat": "sour"
+  },
+  {
+   "id": "sour-mix",
+   "name": "Sour mix",
+   "cat": "sour"
+  },
+  {
+   "id": "succo-arancia",
+   "name": "Succo d'arancia",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-ananas",
+   "name": "Succo d'ananas",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-mirtillo",
+   "name": "Succo di mirtillo rosso",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-pompelmo",
+   "name": "Succo di pompelmo",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-mela",
+   "name": "Succo di mela",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-frutto-passione",
+   "name": "Succo di frutto della passione",
+   "cat": "juice"
+  },
+  {
+   "id": "succo-pomodoro",
+   "name": "Succo di pomodoro",
+   "cat": "juice"
+  },
+  {
+   "id": "soda",
+   "name": "Soda",
+   "cat": "mixer"
+  },
+  {
+   "id": "tonica",
+   "name": "Acqua tonica",
+   "cat": "mixer"
+  },
+  {
+   "id": "cola",
+   "name": "Cola",
+   "cat": "mixer"
+  },
+  {
+   "id": "ginger-ale",
+   "name": "Ginger ale",
+   "cat": "mixer"
+  },
+  {
+   "id": "ginger-beer",
+   "name": "Ginger beer",
+   "cat": "mixer"
+  },
+  {
+   "id": "gassosa",
+   "name": "Gassosa / Sprite",
+   "cat": "mixer"
+  },
+  {
+   "id": "limonata",
+   "name": "Limonata",
+   "cat": "mixer"
+  },
+  {
+   "id": "root-beer",
+   "name": "Root beer",
+   "cat": "mixer"
+  },
+  {
+   "id": "spumante",
+   "name": "Spumante / Champagne",
+   "cat": "mixer"
+  },
+  {
+   "id": "birra",
+   "name": "Birra",
+   "cat": "mixer"
+  },
+  {
+   "id": "limone",
+   "name": "Limone",
+   "cat": "fresh"
+  },
+  {
+   "id": "lime",
+   "name": "Lime",
+   "cat": "fresh"
+  },
+  {
+   "id": "arancia",
+   "name": "Arancia",
+   "cat": "fresh"
+  },
+  {
+   "id": "scorza-limone",
+   "name": "Scorza di limone",
+   "cat": "fresh"
+  },
+  {
+   "id": "scorza-arancia",
+   "name": "Scorza d'arancia",
+   "cat": "fresh"
+  },
+  {
+   "id": "menta",
+   "name": "Menta",
+   "cat": "fresh"
+  },
+  {
+   "id": "ciliegia",
+   "name": "Ciliegia al maraschino",
+   "cat": "fresh"
+  },
+  {
+   "id": "albume",
+   "name": "Albume",
+   "cat": "fresh"
+  },
+  {
+   "id": "uovo",
+   "name": "Uovo",
+   "cat": "fresh"
+  },
+  {
+   "id": "panna",
+   "name": "Panna",
+   "cat": "fresh"
+  },
+  {
+   "id": "latte",
+   "name": "Latte",
+   "cat": "fresh"
+  },
+  {
+   "id": "latte-condensato",
+   "name": "Latte condensato",
+   "cat": "fresh"
+  },
+  {
+   "id": "yogurt",
+   "name": "Yogurt",
+   "cat": "fresh"
+  },
+  {
+   "id": "oliva",
+   "name": "Oliva",
+   "cat": "fresh"
+  },
+  {
+   "id": "ananas",
+   "name": "Ananas",
+   "cat": "fresh"
+  },
+  {
+   "id": "fragole",
+   "name": "Fragole",
+   "cat": "fresh"
+  },
+  {
+   "id": "mela",
+   "name": "Mela",
+   "cat": "fresh"
+  },
+  {
+   "id": "kiwi",
+   "name": "Kiwi",
+   "cat": "fresh"
+  },
+  {
+   "id": "mango",
+   "name": "Mango",
+   "cat": "fresh"
+  },
+  {
+   "id": "zenzero",
+   "name": "Zenzero",
+   "cat": "fresh"
+  },
+  {
+   "id": "caffe",
+   "name": "Caffè",
+   "cat": "other"
+  },
+  {
+   "id": "te",
+   "name": "Tè",
+   "cat": "other"
+  },
+  {
+   "id": "noce-moscata",
+   "name": "Noce moscata",
+   "cat": "other"
+  },
+  {
+   "id": "cannella",
+   "name": "Cannella",
+   "cat": "other"
+  },
+  {
+   "id": "chiodi-garofano",
+   "name": "Chiodi di garofano",
+   "cat": "other"
+  },
+  {
+   "id": "vaniglia",
+   "name": "Estratto di vaniglia",
+   "cat": "other"
+  },
+  {
+   "id": "pepe",
+   "name": "Pepe",
+   "cat": "other"
+  },
+  {
+   "id": "cioccolato",
+   "name": "Cioccolato / cacao",
+   "cat": "other"
+  },
+  {
+   "id": "cardamomo",
+   "name": "Cardamomo",
+   "cat": "other"
+  },
+  {
+   "id": "kool-aid",
+   "name": "Kool-Aid",
+   "cat": "other"
+  }
+ ],
+ "map": {
+  "Ice": "ghiaccio",
+  "Crushed ice": "ghiaccio",
+  "Water": "acqua",
+  "Sugar": "zucchero",
+  "Powdered sugar": "zucchero",
+  "Brown sugar": "zucchero",
+  "Salt": "sale",
+  "Gin": "gin",
+  "Vodka": "vodka",
+  "Absolut Citron": "vodka",
+  "Absolut Kurant": "vodka",
+  "Absolut Vodka": "vodka",
+  "Lemon vodka": "vodka",
+  "Peach Vodka": "vodka",
+  "Vanilla vodka": "vodka",
+  "Cranberry vodka": "vodka",
+  "Citrus vodka": "vodka",
+  "Rum": "rum",
+  "Light rum": "rum-bianco",
+  "White Rum": "rum-bianco",
+  "Bacardi": "rum-bianco",
+  "Bacardi Limon": "rum-bianco",
+  "Dark rum": "rum-scuro",
+  "Añejo rum": "rum-scuro",
+  "Gold rum": "rum-scuro",
+  "Spiced rum": "rum-speziato",
+  "151 proof rum": "rum-overproof",
+  "Cachaca": "cachaca",
+  "Tequila": "tequila",
+  "Mezcal": "tequila",
+  "Whiskey": "whisky",
+  "Blended whiskey": "whisky",
+  "Crown Royal": "whisky",
+  "Rye whiskey": "whisky",
+  "Scotch": "scotch",
+  "Blended Scotch": "scotch",
+  "Bourbon": "bourbon",
+  "Wild Turkey": "bourbon",
+  "Jack Daniels": "bourbon",
+  "Irish whiskey": "whiskey-irlandese",
+  "Brandy": "brandy",
+  "Cognac": "cognac",
+  "Apple brandy": "brandy-mela",
+  "Applejack": "brandy-mela",
+  "Calvados": "brandy-mela",
+  "Absinthe": "assenzio",
+  "Everclear": "alcol-puro",
+  "Grain alcohol": "alcol-puro",
+  "Triple sec": "triple-sec",
+  "Cointreau": "triple-sec",
+  "Grand Marnier": "triple-sec",
+  "Orange Curacao": "triple-sec",
+  "Blue Curacao": "blue-curacao",
+  "Vermouth": "vermouth",
+  "Dry Vermouth": "vermouth-dry",
+  "Sweet Vermouth": "vermouth-rosso",
+  "Campari": "bitter-rosso",
+  "Aperol": "bitter-arancio",
+  "Amaretto": "amaretto",
+  "Kahlua": "liquore-caffe",
+  "Coffee liqueur": "liquore-caffe",
+  "Tia maria": "liquore-caffe",
+  "Baileys irish cream": "crema-irlandese",
+  "Peach schnapps": "liquore-pesca",
+  "Maraschino liqueur": "maraschino",
+  "Galliano": "galliano",
+  "Chambord raspberry liqueur": "liquore-lampone",
+  "Green Chartreuse": "chartreuse",
+  "Creme de Cacao": "creme-de-cacao",
+  "White Creme de Cacao": "creme-de-cacao",
+  "Creme de Cassis": "creme-de-cassis",
+  "White Creme de Menthe": "creme-de-menthe",
+  "Green Creme de Menthe": "creme-de-menthe",
+  "Creme de Menthe": "creme-de-menthe",
+  "Midori melon liqueur": "liquore-melone",
+  "Jägermeister": "amaro-erbe",
+  "Goldschlager": "liquore-cannella",
+  "Southern Comfort": "southern-comfort",
+  "Benedictine": "benedictine",
+  "Frangelico": "liquore-nocciola",
+  "Malibu rum": "liquore-cocco",
+  "Apricot brandy": "liquore-albicocca",
+  "Cherry brandy": "cherry-brandy",
+  "Cherry Heering": "cherry-brandy",
+  "Blackberry brandy": "liquore-mora",
+  "Sloe gin": "gin-prugnolo",
+  "Anis": "anice",
+  "Anisette": "anice",
+  "Pernod": "anice",
+  "Ouzo": "anice",
+  "Sambuca": "sambuca",
+  "Black Sambuca": "sambuca",
+  "Wine": "vino",
+  "Red wine": "vino-rosso",
+  "White Wine": "vino-bianco",
+  "Dry white wine": "vino-bianco",
+  "Port": "porto",
+  "Sherry": "sherry",
+  "Bitters": "angostura",
+  "Angostura Bitters": "angostura",
+  "Orange bitters": "bitter-arancia-gocce",
+  "Sugar syrup": "sciroppo-zucchero",
+  "Simple syrup": "sciroppo-zucchero",
+  "Grenadine": "granatina",
+  "Honey": "miele",
+  "Chocolate syrup": "sciroppo-cioccolato",
+  "Elderflower cordial": "sciroppo-sambuco",
+  "Orgeat syrup": "orzata",
+  "Lemon juice": "succo-limone",
+  "Lime juice": "succo-lime",
+  "Sweet and sour": "sour-mix",
+  "Sour mix": "sour-mix",
+  "Orange juice": "succo-arancia",
+  "Pineapple juice": "succo-ananas",
+  "Cranberry juice": "succo-mirtillo",
+  "Grapefruit juice": "succo-pompelmo",
+  "Apple juice": "succo-mela",
+  "Apple cider": "succo-mela",
+  "Passion fruit juice": "succo-frutto-passione",
+  "Tomato juice": "succo-pomodoro",
+  "Carbonated water": "soda",
+  "Soda water": "soda",
+  "Club soda": "soda",
+  "Tonic water": "tonica",
+  "Coca-Cola": "cola",
+  "Cola": "cola",
+  "Ginger ale": "ginger-ale",
+  "Ginger beer": "ginger-beer",
+  "Lemon-lime soda": "gassosa",
+  "Sprite": "gassosa",
+  "7-Up": "gassosa",
+  "Lemonade": "limonata",
+  "Root beer": "root-beer",
+  "Champagne": "spumante",
+  "Prosecco": "spumante",
+  "Beer": "birra",
+  "Lager": "birra",
+  "Ale": "birra",
+  "Lemon": "limone",
+  "Lime": "lime",
+  "Orange": "arancia",
+  "Lemon peel": "scorza-limone",
+  "Orange peel": "scorza-arancia",
+  "Orange spiral": "scorza-arancia",
+  "Mint": "menta",
+  "Maraschino cherry": "ciliegia",
+  "Cherry": "ciliegia",
+  "Egg white": "albume",
+  "Egg": "uovo",
+  "Egg yolk": "uovo",
+  "Light cream": "panna",
+  "Cream": "panna",
+  "Heavy cream": "panna",
+  "Whipped cream": "panna",
+  "Half-and-half": "panna",
+  "Milk": "latte",
+  "Condensed milk": "latte-condensato",
+  "Yoghurt": "yogurt",
+  "Olive": "oliva",
+  "Pineapple": "ananas",
+  "Strawberries": "fragole",
+  "Apple": "mela",
+  "Kiwi": "kiwi",
+  "Mango": "mango",
+  "Ginger": "zenzero",
+  "Coffee": "caffe",
+  "Espresso": "caffe",
+  "Tea": "te",
+  "Nutmeg": "noce-moscata",
+  "Cinnamon": "cannella",
+  "Cloves": "chiodi-garofano",
+  "Vanilla extract": "vaniglia",
+  "Pepper": "pepe",
+  "Chocolate": "cioccolato",
+  "Cocoa powder": "cioccolato",
+  "Cardamom": "cardamomo",
+  "Kool-Aid": "kool-aid"
+ }
+}
