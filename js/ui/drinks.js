@@ -1,7 +1,7 @@
-import { state, evaluated, persist, render, refreshGrid, openCard } from '../app.js';
+import { state, drinks, evaluated, persist, render, refreshGrid, openCard } from '../app.js';
 import { esc } from '../dom.js';
 import { typeName } from '../types.js';
-import { sortForGrid } from '../match.js';
+import { sortForGrid, spiritGroups, SPIRIT_GROUPS } from '../match.js';
 
 export const CATEGORIES = [
   ['spirit', 'Distillati'], ['liqueur', 'Liquori e vini'], ['sweet', 'Sciroppi e dolcificanti'],
@@ -22,13 +22,19 @@ export function missingLabel(m) {
   return `manca: ${name}${m.reason === 'off' ? ' (spento)' : ''}`;
 }
 
+// Outing mode: the pantry does not matter, every drink is on the menu.
+export const outing = () => state.settings.mode === 'uscita';
+export const isDisliked = (d) => state.disliked.includes(d.id);
+export const results = () => (outing() ? drinks().map((drink) => ({ drink })) : evaluated());
+
 export function badges(r) {
   const out = [];
-  if (r.status === 'ok') out.push('<span class="badge ok">ok</span>');
+  if (!r.status) { /* outing: no pantry status */ } else if (r.status === 'ok') out.push('<span class="badge ok">ok</span>');
   else if (r.status === 'miss1') out.push(`<span class="badge miss">${esc(missingLabel(r.missing[0]))}</span>`);
   else out.push(`<span class="badge">mancano ${r.missing.length}</span>`);
   if (r.drink.alcoholic === 'no') out.push('<span class="badge na">analcolico</span>');
   if (r.drink.source !== 'cocktaildb') out.push('<span class="badge na">mia</span>');
+  if (isDisliked(r.drink)) out.push('<span class="badge">👎</span>');
   return `<div class="badges">${out.join('')}</div>`;
 }
 
@@ -43,8 +49,13 @@ export function drinkTile(r, why = '') {
     ${why ? `<span class="why">${esc(why)}</span>` : ''}${badges(r)}</div></button>`;
 }
 
-export const passesFilter = (d) => state.ui.filter === 'all'
-  || (state.ui.filter === 'cocktail' ? d.alcoholic !== 'no' : d.alcoholic !== 'yes');
+export const passesFilter = (d) => (state.ui.filter === 'all'
+  || (state.ui.filter === 'cocktail' ? d.alcoholic !== 'no' : d.alcoholic !== 'yes'))
+  && (!outing() || !state.ui.spirits.length || spiritGroups(state.idx, d).some((g) => state.ui.spirits.includes(g)));
+
+// What the grid and the recommendations draw from; disliked drinks only come back through search.
+export const inPool = (r) => passesFilter(r.drink) && !isDisliked(r.drink) && (outing() || r.status !== 'missN');
+const byName = (rs) => [...rs].sort((a, b) => a.drink.name.localeCompare(b.drink.name));
 
 const section = (title, rs) => (rs.length
   ? `<h2 class="section-title">${esc(title)} (${rs.length})</h2><div class="grid">${rs.map((r) => drinkTile(r)).join('')}</div>`
@@ -54,13 +65,18 @@ const section = (title, rs) => (rs.length
 export const gridExtras = { top: () => '' };
 
 export function renderGrid() {
-  const all = evaluated().filter((r) => passesFilter(r.drink));
+  const all = results().filter((r) => passesFilter(r.drink));
   const q = state.ui.search.trim().toLowerCase();
   if (q) {
-    const found = sortForGrid(all.filter((r) => r.drink.name.toLowerCase().includes(q)));
+    const hits = all.filter((r) => r.drink.name.toLowerCase().includes(q));
+    const found = outing() ? byName(hits) : sortForGrid(hits);
     return found.length ? section('Risultati', found) : '<p class="muted">Nessun drink con questo nome.</p>';
   }
-  const sorted = sortForGrid(all);
+  if (outing()) {
+    const pool = byName(all.filter(inPool));
+    return gridExtras.top() + (pool.length ? section('Tutti i drink', pool) : '<p class="muted">Nessun drink con questi filtri.</p>');
+  }
+  const sorted = sortForGrid(all.filter(inPool));
   const ok = sorted.filter((r) => r.status === 'ok');
   const miss1 = sorted.filter((r) => r.status === 'miss1');
   const empty = !ok.length && !miss1.length
@@ -68,6 +84,16 @@ export function renderGrid() {
     : '';
   return gridExtras.top() + section('Puoi farli ora', ok) + section('Manca 1 ingrediente', miss1) + empty;
 }
+
+function renderFilters() {
+  return `<p class="small muted" style="margin:0 0 8px">Fuori casa la dispensa non conta: qui ci sono tutti i drink.</p>
+    <h3>Base alcolica</h3>
+    <div class="chips">${SPIRIT_GROUPS.map(([g, label]) => `<button class="chip" data-action="spirit" data-v="${g}"
+      aria-pressed="${state.ui.spirits.includes(g)}">${label}</button>`).join('')}</div>
+    ${state.ui.spirits.length ? '<button class="btn" style="margin-top:12px;width:100%" data-action="clearSpirits">Tutte le basi</button>' : ''}`;
+}
+
+const MODES = [['casa', '🏠 Casa'], ['uscita', '🍹 Uscita']];
 
 function renderPanel() {
   const ids = Object.keys(state.pantry.items);
@@ -86,8 +112,10 @@ function renderPanel() {
 const FILTERS = [['all', 'Tutti'], ['cocktail', 'Cocktail'], ['mocktail', 'Mocktail']];
 
 export function renderDrinks() {
-  return `<div class="layout">
-    <aside class="panel" aria-label="Stasera uso">${renderPanel()}</aside>
+  return `<div class="toolbar"><div class="seg" role="group" aria-label="Modalità">${MODES.map(([v, l]) =>
+      `<button data-action="mode" data-v="${v}" aria-pressed="${state.settings.mode === v}">${l}</button>`).join('')}</div></div>
+    <div class="layout">
+    <aside class="panel" aria-label="${outing() ? 'Filtri' : 'Stasera uso'}">${outing() ? renderFilters() : renderPanel()}</aside>
     <section>
       <div class="toolbar" id="recommend">${recommendBox.render()}</div>
       <div class="toolbar">
@@ -109,6 +137,18 @@ export const drinkActions = {
   open: (el) => openCard(el.dataset.id),
   filter: (el) => { state.ui.filter = el.dataset.v; render(); },
   wakeAll: () => { state.off = []; persist('off'); render(); },
+  mode: (el) => {
+    state.settings = { ...state.settings, mode: el.dataset.v };
+    persist('settings');
+    state.ui.picks = null; // picks came from the other pool
+    render();
+  },
+  spirit: (el) => {
+    const g = el.dataset.v;
+    state.ui.spirits = state.ui.spirits.includes(g) ? state.ui.spirits.filter((x) => x !== g) : [...state.ui.spirits, g];
+    render();
+  },
+  clearSpirits: () => { state.ui.spirits = []; render(); },
 };
 
 export const drinkChanges = {

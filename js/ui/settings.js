@@ -1,4 +1,4 @@
-import { state, persist, render, toast, loadCatalog } from '../app.js';
+import { state, drinks, persist, render, toast, loadCatalog } from '../app.js';
 import { store } from '../store.js';
 import { esc } from '../dom.js';
 import { exportData, parseImport } from '../backup.js';
@@ -18,6 +18,13 @@ export function renderSettings() {
           `<button data-action="setUnit" data-v="${u}" aria-pressed="${s.unit === u}">${u}</button>`).join('')}</div></div>
       <label class="toggle" style="max-width:520px"><span>Ghiaccio, acqua, zucchero e sale sempre disponibili</span>
         <input type="checkbox" data-change="basics" ${s.basics ? 'checked' : ''}></label>
+    </div>
+    <div class="box">
+      <h2>Non mi piacciono</h2>
+      ${state.disliked.length ? `<div class="list">${state.disliked.map((id) => `<div class="row">
+        <span class="grow">${esc(drinks().find((d) => d.id === id)?.name ?? id)}</span>
+        <button class="btn" data-action="undislike" data-id="${esc(id)}">Rimetti in lista</button></div>`).join('')}</div>`
+        : '<p class="small muted">Nessuno. Usa 👎 nella scheda di un drink per toglierlo da lista e consigli.</p>'}
     </div>
     <div class="box">
       <h2>Gemini</h2>
@@ -50,6 +57,7 @@ const saveSettings = (patch) => { state.settings = { ...state.settings, ...patch
 
 export const settingsActions = {
   setUnit: (el) => { saveSettings({ unit: el.dataset.v }); render(); },
+  undislike: (el) => { state.disliked = state.disliked.filter((x) => x !== el.dataset.id); persist('disliked'); render(); },
   refreshCatalog: () => { loadCatalog(); render(); },
   exportData: () => {
     const blob = new Blob([JSON.stringify(exportData(state), null, 1)], { type: 'application/json' });
@@ -80,8 +88,9 @@ export const settingsChanges = {
     state.recipes = recipes;
     state.settings = { ...state.settings, ...r.data.settings };
     state.settings.model = modelOrDefault(state.settings.model);
+    state.disliked = r.data.disliked;
     state.off = [];
-    ['pantry', 'recipes', 'settings', 'off'].forEach(persist);
+    ['pantry', 'recipes', 'settings', 'off', 'disliked'].forEach(persist);
     toast('Backup importato.');
     render();
   },

@@ -38,3 +38,17 @@ function blockingType(idx, drink, avail) {
   }
   return drink.ingredients[0].type;
 }
+
+// Base spirit groups for the outing filters; a drink with none of them is "altro".
+export const SPIRIT_GROUPS = [['gin', 'Gin'], ['rum', 'Rum'], ['tequila', 'Tequila'], ['vodka', 'Vodka'],
+  ['whisky', 'Whisky'], ['brandy', 'Brandy'], ['altro', 'Altro']];
+
+export function spiritGroups(idx, drink) {
+  const found = new Set();
+  for (const ing of drink.ingredients) {
+    for (let t = ing.type; t; t = idx.byId[t]?.parent) {
+      if (SPIRIT_GROUPS.some(([g]) => g === t && g !== 'altro')) found.add(t);
+    }
+  }
+  return found.size ? SPIRIT_GROUPS.map(([g]) => g).filter((g) => found.has(g)) : ['altro'];
+}

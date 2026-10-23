@@ -1,8 +1,8 @@
 const VERSION = 1;
 
-export function exportData({ pantry, recipes, settings }) {
+export function exportData({ pantry, recipes, settings, disliked = [] }) {
   const { geminiKey, ...safe } = settings; // the key never leaves the device
-  return { app: 'barrecipes', version: VERSION, exportedAt: new Date().toISOString(), pantry, recipes, settings: safe };
+  return { app: 'barrecipes', version: VERSION, exportedAt: new Date().toISOString(), pantry, recipes, disliked, settings: safe };
 }
 
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -26,10 +26,14 @@ function check(d) {
       return `Ingredienti non validi in "${r.name}".`;
     }
   }
+  if (d.disliked !== undefined && (!Array.isArray(d.disliked) || d.disliked.some((id) => typeof id !== 'string'))) {
+    return 'Elenco «Non mi piacciono» non valido nel file.';
+  }
   const st = d.settings;
   if (st !== undefined && (!isObj(st) || (st.unit !== undefined && !['oz', 'ml', 'cl'].includes(st.unit))
     || (st.basics !== undefined && typeof st.basics !== 'boolean')
-    || (st.model !== undefined && typeof st.model !== 'string'))) return 'Impostazioni non valide nel file.';
+    || (st.model !== undefined && typeof st.model !== 'string')
+    || (st.mode !== undefined && !['casa', 'uscita'].includes(st.mode)))) return 'Impostazioni non valide nel file.';
   return null;
 }
 
@@ -39,5 +43,5 @@ export function parseImport(text) {
   const error = check(d);
   if (error) return { ok: false, error };
   const { geminiKey, ...settings } = d.settings ?? {};
-  return { ok: true, data: { pantry: { items: d.pantry.items }, recipes: d.recipes, settings } };
+  return { ok: true, data: { pantry: { items: d.pantry.items }, recipes: d.recipes, disliked: d.disliked ?? [], settings } };
 }

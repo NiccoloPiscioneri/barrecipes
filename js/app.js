@@ -12,7 +12,8 @@ import { renderSettings, settingsActions, settingsChanges } from './ui/settings.
 import { aiActions, aiSubmits } from './ui/ai.js';
 import { renderRecipes, recipeActions, recipeInputs, recipeChanges, recipeSubmits } from './ui/recipes.js';
 
-const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings' };
+const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings',
+  disliked: 'br.disliked' };
 
 export const state = {
   idx: null,
@@ -20,8 +21,9 @@ export const state = {
   recipes: store.get(KEYS.recipes, []),
   pantry: store.get(KEYS.pantry, { items: {} }),
   off: store.get(KEYS.off, []),
-  settings: { unit: 'oz', basics: true, ...store.get(KEYS.settings, {}) },
-  ui: { tab: 'drinks', filter: 'all', search: '', card: null, picks: null, loading: null, error: null },
+  disliked: store.get(KEYS.disliked, []),
+  settings: { unit: 'oz', basics: true, mode: 'casa', ...store.get(KEYS.settings, {}) },
+  ui: { tab: 'drinks', filter: 'all', spirits: [], search: '', card: null, picks: null, loading: null, error: null },
 };
 
 state.settings.model = modelOrDefault(state.settings.model);

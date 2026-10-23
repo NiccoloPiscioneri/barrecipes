@@ -92,9 +92,12 @@ export const REC_SCHEMA = {
   required: ['picks'],
 };
 
-export function recommendPrompt(query, compact) {
+export function recommendPrompt(query, compact, context = 'casa') {
   const list = compact.map((d) => `${d.id} | ${d.name} | ${d.types.join(', ')}${d.alcoholic === 'no' ? ' | analcolico' : ''}`).join('\n');
-  return [{ text: `Sei un bartender. Richiesta: "${query}".
+  const where = context === 'bar'
+    ? '\nLa persona è fuori al bar e vuole ordinare: preferisci drink che un barista conosce e sa preparare.'
+    : '';
+  return [{ text: `Sei un bartender. Richiesta: "${query}".${where}
 Scegli da 3 a 5 drink SOLO da questo elenco (formato: id | nome | ingredienti) e restituisci in "picks" il loro id esatto con "why": una riga in italiano sul perché.
 Se nessuno è adatto, lascia "picks" vuoto e proponi in "external" fino a 2 drink famosi (name, why) che non sono nell'elenco.
 Elenco:

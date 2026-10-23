@@ -58,3 +58,19 @@ test('rifiuta url non https, type non stringa e impostazioni non valide', () => 
   assert.equal(bad({ ...base(), settings: { model: 3 } }).ok, false);
   assert.equal(bad({ ...base(), recipes: [{ ...recipe, url: 'https://youtu.be/a' }] }).ok, true);
 });
+
+test('dislike nel backup: esportati, importati, vecchi backup senza campo ok', () => {
+  const out = exportData({ ...state, disliked: ['cdb:1'] });
+  assert.deepEqual(out.disliked, ['cdb:1']);
+  assert.deepEqual(parseImport(JSON.stringify(out)).data.disliked, ['cdb:1']);
+  const old = base();
+  delete old.disliked;
+  assert.deepEqual(parseImport(JSON.stringify(old)).data.disliked, []);
+  assert.equal(bad({ ...base(), disliked: 'cdb:1' }).ok, false);
+  assert.equal(bad({ ...base(), disliked: [3] }).ok, false);
+});
+
+test('modalità nelle impostazioni: solo casa o uscita', () => {
+  assert.equal(bad({ ...base(), settings: { mode: 'uscita' } }).ok, true);
+  assert.equal(bad({ ...base(), settings: { mode: 'festa' } }).ok, false);
+});
