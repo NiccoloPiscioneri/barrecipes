@@ -5,7 +5,7 @@ import { evaluate } from '../match.js';
 import { pickSource, consume } from '../pantry.js';
 import { PORTIONS, STRENGTH, computeDose, feasible, usage, pruneDrops } from '../dose.js';
 import { formatAmount, displayAmount } from '../measure.js';
-import { missingLabel } from './drinks.js';
+import { missingLabel, outing, isDisliked } from './drinks.js';
 
 const FULL_BOTTLE_OZ = 25; // ~750 ml
 const LOW_OZ = 2;
@@ -53,10 +53,37 @@ function ingredientRow(line, a, missing) {
   return `<tr><td>${esc(name)}${raw}${extra}</td><td>${amount}</td></tr>`;
 }
 
+const dislikeButton = (d) => `<button class="btn" data-action="dislike" aria-pressed="${isDisliked(d)}">${isDisliked(d)
+  ? '👍 Rimetti in lista' : '👎 Non mi piace'}</button>`;
+
+const shell = (d, body) => `<div class="backdrop" data-action="closeCard"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(d.name)}">
+    <button class="btn close" data-action="closeCard" aria-label="Chiudi">✕</button>
+    <div class="card"><div>${d.thumb ? `<img src="${esc(d.thumb)}" alt="${esc(d.name)}" onerror="this.removeAttribute('src')">` : '<div class="ph"></div>'}</div>
+    <div>${body}</div></div></div></div>`;
+
+const videoLink = (d) => (safeUrl(d.url)
+  ? `<p class="small"><a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">Video originale</a></p>` : '');
+
+// At the bar: what is in it and how it is made, nothing about bottles or portions.
+function renderOutingCard(d) {
+  const rows = d.ingredients.map((l) => {
+    const name = typeName(state.idx, l.type);
+    const raw = l.raw && l.raw.toLowerCase() !== name.toLowerCase() ? ` <span class="muted small">(${esc(l.raw)})</span>` : '';
+    return `<tr><td>${esc(name)}${raw}</td><td>${esc(displayAmount(l, state.settings.unit))}</td></tr>`;
+  }).join('');
+  return shell(d, `<h2>${esc(d.name)}</h2>
+    ${d.alcoholic === 'no' ? '<span class="badge na">analcolico</span>' : ''}
+    <table class="ings" style="margin-top:8px"><tbody>${rows}</tbody></table>
+    <h3 style="margin-top:16px">Procedimento</h3>
+    <p class="instructions">${esc(d.instructions || 'Nessun procedimento.')}</p>
+    ${videoLink(d)}${dislikeButton(d)}`);
+}
+
 export function renderCard() {
   const c = state.ui.card;
   const d = findDrink(c.id);
   if (!d) return '';
+  if (outing()) return renderOutingCard(d);
   const a = avail();
   const { missing } = evaluate(state.idx, d, a, state.off);
   const combos = feasible(state.idx, d, a, c.sub);
@@ -71,14 +98,11 @@ export function renderCard() {
     data-v="${s}" aria-pressed="${c.strength === s}" ${has(c.portion, s) ? '' : 'disabled'}>${STRENGTH_LABEL[s]}</button>`));
   const units = seg('Unità', ['oz', 'ml', 'cl'].map((u) => `<button data-action="unit" data-v="${u}"
     aria-pressed="${c.unit === u}">${u}</button>`));
-  const img = d.thumb ? `<img src="${esc(d.thumb)}" alt="${esc(d.name)}" onerror="this.removeAttribute('src')">` : '<div class="ph"></div>';
   const why = canDo ? '' : `<p class="small muted">${combos.length
     ? 'Questa combinazione supera quello che resta nelle bottiglie.'
     : 'Ti manca qualcosa (o non basta): usa un\'alternativa o aggiorna la dispensa.'}</p>`;
 
-  return `<div class="backdrop" data-action="closeCard"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(d.name)}">
-    <button class="btn close" data-action="closeCard" aria-label="Chiudi">✕</button>
-    <div class="card"><div>${img}</div><div>
+  return shell(d, `
       <h2>${esc(d.name)}</h2>
       ${d.alcoholic === 'no' ? '<span class="badge na">analcolico</span>' : ''}
       <div class="controls">${portions}${strengths}${units}</div>
@@ -88,10 +112,10 @@ export function renderCard() {
       ${c.strength === 'leggero' && d.alcoholic !== 'no' ? '<p class="small muted">Leggero: meno alcol, stesso equilibrio.</p>' : ''}
       <h3 style="margin-top:16px">Procedimento</h3>
       <p class="instructions">${esc(d.instructions || 'Nessun procedimento.')}</p>
-      ${safeUrl(d.url) ? `<p class="small"><a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">Video originale</a></p>` : ''}
+      ${videoLink(d)}
       ${why}
       <button class="btn primary" data-action="done" ${canDo ? '' : 'disabled'}>Fatto! (scala dalle bottiglie)</button>
-    </div></div></div></div>`;
+      ${dislikeButton(d)}`);
 }
 
 export const cardActions = {
@@ -108,6 +132,14 @@ export const cardActions = {
     renderOverlay();
   },
   strength: (el) => { state.ui.card.strength = el.dataset.v; renderOverlay(); },
+  dislike: () => {
+    const id = state.ui.card.id;
+    const was = state.disliked.includes(id);
+    state.disliked = was ? state.disliked.filter((x) => x !== id) : [...state.disliked, id];
+    persist('disliked');
+    toast(was ? 'Rimesso in lista.' : 'Tolto dalla lista e dai consigli. Lo ritrovi cercandolo per nome.');
+    render();
+  },
   unit: (el) => { state.ui.card.unit = el.dataset.v; renderOverlay(); },
   done: (el) => {
     el.disabled = true;

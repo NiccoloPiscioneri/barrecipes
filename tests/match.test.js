@@ -70,3 +70,15 @@ test('nessuna combinazione fattibile anche se ogni minimo singolo basta → low'
   assert.equal(r.status, 'miss1');
   assert.deepEqual(r.missing, [{ type: 'tonica', reason: 'low' }]);
 });
+
+test('spiritGroups: base alcolica per i filtri dell\'uscita', async () => {
+  const { spiritGroups, SPIRIT_GROUPS } = await import('../js/match.js');
+  assert.deepEqual(SPIRIT_GROUPS.map(([id]) => id), ['gin', 'rum', 'tequila', 'vodka', 'whisky', 'brandy', 'altro']);
+  assert.deepEqual(spiritGroups(idx, margarita), ['tequila']);
+  assert.deepEqual(spiritGroups(idx, drink('Daiquiri', [['Light rum', 2], ['Lime juice', 1]])), ['rum']);
+  assert.deepEqual(spiritGroups(idx, drink('Manhattan', [['Bourbon', 2], ['Sweet Vermouth', 1]])), ['whisky']);
+  assert.deepEqual(spiritGroups(idx, drink('Sidecar', [['Cognac', 2], ['Triple sec', 1]])), ['brandy']);
+  assert.deepEqual(spiritGroups(idx, drink('Long Island', [['Gin', 1], ['Vodka', 1], ['Tequila', 1]])), ['gin', 'tequila', 'vodka']);
+  assert.deepEqual(spiritGroups(idx, drink('Spritz', [['Aperol', 2], ['Prosecco', 3]])), ['altro']);
+  assert.deepEqual(spiritGroups(idx, drink('Caipirinha', [['Cachaca', 2]])), ['altro']);
+});

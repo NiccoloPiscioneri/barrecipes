@@ -1,7 +1,7 @@
 // App shell is served from cache and refreshed in the background (stale-while-revalidate),
 // so the app starts offline and picks up updates on the next load.
 // API calls and drink photos always go to the network.
-const CACHE = 'barrecipes-v2';
+const CACHE = 'barrecipes-v3';
 const ASSETS = [
   './', 'index.html', 'styles.css', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png',
   'data/types.json',

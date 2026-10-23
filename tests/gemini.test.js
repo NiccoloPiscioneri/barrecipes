@@ -120,3 +120,9 @@ test('callGemini: limita i token e va in timeout invece di restare appeso', asyn
       fetchFn: (u, o) => new Promise((_, rej) => o.signal.addEventListener('abort', () => rej(new DOMException('t', 'TimeoutError')))) }),
     (e) => e instanceof GeminiError && /non risponde/.test(e.message));
 });
+
+test('recommendPrompt al bar chiede drink ordinabili', () => {
+  const list = [{ id: 'cdb:1', name: 'Paloma', types: ['Tequila'], alcoholic: 'yes' }];
+  assert.match(recommendPrompt('fruttato', list, 'bar')[0].text, /barista/);
+  assert.doesNotMatch(recommendPrompt('fruttato', list)[0].text, /barista/);
+});
