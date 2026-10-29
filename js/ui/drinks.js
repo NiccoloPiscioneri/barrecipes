@@ -25,6 +25,7 @@ export function missingLabel(m) {
 // Outing mode: the pantry does not matter, every drink is on the menu.
 export const outing = () => state.settings.mode === 'uscita';
 export const isDisliked = (d) => state.disliked.includes(d.id);
+export const isSaved = (d) => state.saved.includes(d.id);
 export const results = () => (outing() ? drinks().map((drink) => ({ drink })) : evaluated());
 
 export function badges(r) {
@@ -132,6 +133,13 @@ export function renderDrinks() {
 export const recommendBox = {
   render: () => '<input class="input" placeholder="✨ Consigliami: fruttato con tequila…" disabled aria-label="Consigliami">',
 };
+
+export function renderSaved() {
+  const rs = byName(results().filter((r) => isSaved(r.drink)));
+  return `<h1>Salvati</h1>${rs.length
+    ? `<div class="grid">${rs.map((r) => drinkTile(r)).join('')}</div>`
+    : '<p class="muted">Nessun drink salvato. Usa ☆ Salva nella scheda di un drink.</p>'}`;
+}
 
 export const drinkActions = {
   open: (el) => openCard(el.dataset.id),

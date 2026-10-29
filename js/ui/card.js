@@ -5,7 +5,7 @@ import { evaluate } from '../match.js';
 import { pickSource, consume } from '../pantry.js';
 import { PORTIONS, STRENGTH, computeDose, feasible, usage, pruneDrops } from '../dose.js';
 import { formatAmount, displayAmount } from '../measure.js';
-import { missingLabel, outing, isDisliked } from './drinks.js';
+import { missingLabel, outing, isDisliked, isSaved } from './drinks.js';
 
 const FULL_BOTTLE_OZ = 25; // ~750 ml
 const LOW_OZ = 2;
@@ -53,7 +53,9 @@ function ingredientRow(line, a, missing) {
   return `<tr><td>${esc(name)}${raw}${extra}</td><td>${amount}</td></tr>`;
 }
 
-const dislikeButton = (d) => `<button class="btn" data-action="dislike" aria-pressed="${isDisliked(d)}">${isDisliked(d)
+const likeButtons = (d) => `<button class="btn" data-action="save" aria-pressed="${isSaved(d)}">${isSaved(d)
+  ? '⭐ Salvato' : '☆ Salva'}</button>
+  <button class="btn" data-action="dislike" aria-pressed="${isDisliked(d)}">${isDisliked(d)
   ? '👍 Rimetti in lista' : '👎 Non mi piace'}</button>`;
 
 const shell = (d, body) => `<div class="backdrop" data-action="closeCard"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(d.name)}">
@@ -76,7 +78,7 @@ function renderOutingCard(d) {
     <table class="ings" style="margin-top:8px"><tbody>${rows}</tbody></table>
     <h3 style="margin-top:16px">Procedimento</h3>
     <p class="instructions">${esc(d.instructions || 'Nessun procedimento.')}</p>
-    ${videoLink(d)}${dislikeButton(d)}`);
+    ${videoLink(d)}${likeButtons(d)}`);
 }
 
 export function renderCard() {
@@ -115,7 +117,7 @@ export function renderCard() {
       ${videoLink(d)}
       ${why}
       <button class="btn primary" data-action="done" ${canDo ? '' : 'disabled'}>Fatto! (scala dalle bottiglie)</button>
-      ${dislikeButton(d)}`);
+      ${likeButtons(d)}`);
 }
 
 export const cardActions = {
@@ -138,6 +140,12 @@ export const cardActions = {
     state.disliked = was ? state.disliked.filter((x) => x !== id) : [...state.disliked, id];
     persist('disliked');
     toast(was ? 'Rimesso in lista.' : 'Tolto dalla lista e dai consigli. Lo ritrovi cercandolo per nome.');
+    render();
+  },
+  save: () => {
+    const id = state.ui.card.id;
+    state.saved = state.saved.includes(id) ? state.saved.filter((x) => x !== id) : [...state.saved, id];
+    persist('saved');
     render();
   },
   unit: (el) => { state.ui.card.unit = el.dataset.v; renderOverlay(); },

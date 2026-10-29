@@ -1,6 +1,6 @@
 # BarRecipes
 
-Ricettario di drink per tablet: mostra i drink che puoi fare con la tua dispensa, scala le dosi dalle bottiglie e usa Gemini per alternative, consigli e ricette da YouTube. In modalità **Uscita** mostra tutti i drink, con filtri e consigli, per scegliere cosa ordinare al bar; con 👎 togli dalla lista quelli che non ti piacciono.
+Ricettario di drink per tablet: mostra i drink che puoi fare con la tua dispensa, scala le dosi dalle bottiglie e usa Gemini per alternative, consigli e ricette da YouTube. In modalità **Uscita** mostra tutti i drink, con filtri e consigli, per scegliere cosa ordinare al bar; con 👎 togli dalla lista quelli che non ti piacciono e con ⭐ li salvi nella scheda **Salvati**.
 
 Webapp statica (HTML/CSS/JS, nessun build, nessun backend). I dati restano nel browser del dispositivo.
 

@@ -5,7 +5,7 @@ import { availableSet } from './pantry.js';
 import { evaluate } from './match.js';
 import { esc } from './dom.js';
 import { modelOrDefault } from './gemini.js';
-import { renderDrinks, renderGrid, drinkActions, drinkChanges, drinkInputs } from './ui/drinks.js';
+import { renderDrinks, renderGrid, renderSaved, drinkActions, drinkChanges, drinkInputs } from './ui/drinks.js';
 import { renderCard, initCard, cardActions } from './ui/card.js';
 import { renderPantry, pantryActions, pantryChanges, pantryInputs } from './ui/pantry.js';
 import { renderSettings, settingsActions, settingsChanges } from './ui/settings.js';
@@ -13,7 +13,7 @@ import { aiActions, aiSubmits } from './ui/ai.js';
 import { renderRecipes, recipeActions, recipeInputs, recipeChanges, recipeSubmits } from './ui/recipes.js';
 
 const KEYS = { catalog: 'br.catalog', recipes: 'br.recipes', pantry: 'br.pantry', off: 'br.off', settings: 'br.settings',
-  disliked: 'br.disliked' };
+  disliked: 'br.disliked', saved: 'br.saved' };
 
 export const state = {
   idx: null,
@@ -22,6 +22,7 @@ export const state = {
   pantry: store.get(KEYS.pantry, { items: {} }),
   off: store.get(KEYS.off, []),
   disliked: store.get(KEYS.disliked, []),
+  saved: store.get(KEYS.saved, []),
   settings: { unit: 'oz', basics: true, mode: 'casa', ...store.get(KEYS.settings, {}) },
   ui: { tab: 'drinks', filter: 'all', spirits: [], search: '', card: null, picks: null, loading: null, error: null },
 };
@@ -62,6 +63,7 @@ export function toast(msg, ms = 3000) {
 
 const views = {
   drinks: renderDrinks,
+  saved: renderSaved,
   pantry: renderPantry,
   recipes: renderRecipes,
   settings: renderSettings,
@@ -89,7 +91,23 @@ export function render() {
 
 export function renderOverlay() {
   document.getElementById('overlay').innerHTML = state.ui.card ? renderCard() : '';
+  syncHistory();
 }
+
+// Home is the Drink tab with no card open. Anywhere else owns one extra history entry,
+// so Back returns home, and Back at home leaves the app as the system does by default.
+const away = () => state.ui.tab !== 'drinks' || !!state.ui.card;
+function syncHistory() {
+  if (away() && !history.state?.away) history.pushState({ away: true }, '');
+  else if (!away() && history.state?.away) history.back();
+}
+addEventListener('popstate', () => {
+  if (history.state?.away || !away()) return;
+  state.ui.tab = 'drinks';
+  state.ui.card = null;
+  render();
+  scrollTo(0, 0);
+});
 
 export const refreshGrid = () => { document.getElementById('grid').innerHTML = renderGrid(); };
 
