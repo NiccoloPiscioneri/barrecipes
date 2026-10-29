@@ -89,8 +89,9 @@ export const settingsChanges = {
     state.settings = { ...state.settings, ...r.data.settings };
     state.settings.model = modelOrDefault(state.settings.model);
     state.disliked = r.data.disliked;
+    state.saved = r.data.saved;
     state.off = [];
-    ['pantry', 'recipes', 'settings', 'off', 'disliked'].forEach(persist);
+    ['pantry', 'recipes', 'settings', 'off', 'disliked', 'saved'].forEach(persist);
     toast('Backup importato.');
     render();
   },

@@ -74,3 +74,14 @@ test('modalità nelle impostazioni: solo casa o uscita', () => {
   assert.equal(bad({ ...base(), settings: { mode: 'uscita' } }).ok, true);
   assert.equal(bad({ ...base(), settings: { mode: 'festa' } }).ok, false);
 });
+
+test('salvati nel backup: esportati, importati, vecchi backup senza campo ok', () => {
+  const out = exportData({ ...state, saved: ['cdb:2'] });
+  assert.deepEqual(out.saved, ['cdb:2']);
+  assert.deepEqual(parseImport(JSON.stringify(out)).data.saved, ['cdb:2']);
+  const old = base();
+  delete old.saved;
+  assert.deepEqual(parseImport(JSON.stringify(old)).data.saved, []);
+  assert.equal(bad({ ...base(), saved: 'cdb:2' }).ok, false);
+  assert.equal(bad({ ...base(), saved: [3] }).ok, false);
+});
